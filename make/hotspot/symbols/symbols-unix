@@ -200,3 +200,9 @@ JVM_AddModuleExportsToAllUnnamed
 JVM_AddReadsModule
 JVM_DefineModule
 JVM_SetBootLoaderUnnamedModule
+
+# Runtime
+JVM_AddressOf
+JVM_FieldSizeOf
+JVM_FieldOffsetOf
+JVM_SizeOf

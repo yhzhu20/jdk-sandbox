@@ -1319,6 +1319,29 @@ void LIRGenerator::do_currentThread(Intrinsic* x) {
   __ move_wide(new LIR_Address(getThreadPointer(), in_bytes(JavaThread::threadObj_offset()), T_OBJECT), reg);
 }
 
+void LIRGenerator::do_addressOf(Intrinsic* x) {
+  assert(x->number_of_arguments() == 1, "wrong type");
+  LIRItem value(x->argument_at(0), this);
+  value.load_item();
+  LIR_Opr reg = rlock_result(x);
+
+  __ move(value.result(), reg, NULL);
+}
+
+void LIRGenerator::do_sizeOf(Intrinsic* x) {
+  assert(x->number_of_arguments() == 1, "wrong type");
+  LIRItem value(x->argument_at(0), this);
+  value.load_item();
+  LIR_Opr reg = rlock_result(x);
+
+  LIR_Opr klass = new_register(T_METADATA);
+  __ move(new LIR_Address(value.result(), oopDesc::klass_offset_in_bytes(), T_ADDRESS), klass, NULL);
+  LIR_Opr layout = new_register(T_INT);
+  __ move(new LIR_Address(klass, in_bytes(Klass::layout_helper_offset()), T_INT), layout);
+
+  // TODO: Is not really correct if layout helper contains slow_path bit.
+  __ convert(Bytecodes::_i2l, layout, reg);
+}
 
 void LIRGenerator::do_RegisterFinalizer(Intrinsic* x) {
   assert(x->number_of_arguments() == 1, "wrong type");
@@ -3044,6 +3067,8 @@ void LIRGenerator::do_Intrinsic(Intrinsic* x) {
   case vmIntrinsics::_isPrimitive:    do_isPrimitive(x);   break;
   case vmIntrinsics::_getClass:       do_getClass(x);      break;
   case vmIntrinsics::_currentThread:  do_currentThread(x); break;
+  case vmIntrinsics::_addressOf:      do_addressOf(x);     break;
+  case vmIntrinsics::_sizeOf:         do_sizeOf(x);        break;
 
   case vmIntrinsics::_dlog:           // fall through
   case vmIntrinsics::_dlog10:         // fall through

@@ -334,6 +334,9 @@ class LibraryCallKit : public GraphKit {
   bool inline_character_compare(vmIntrinsics::ID id);
   bool inline_fp_min_max(vmIntrinsics::ID id);
 
+  bool inline_addressOf();
+  bool inline_sizeOf();
+
   bool inline_profileBoolean();
   bool inline_isCompileConstant();
   void clear_upper_avx() {
@@ -905,6 +908,12 @@ bool LibraryCallKit::try_to_inline(int predicate) {
   case vmIntrinsics::_maxD:
   case vmIntrinsics::_minD:
     return inline_fp_min_max(intrinsic_id());
+
+  case vmIntrinsics::_sizeOf:
+    return inline_sizeOf();
+
+  case vmIntrinsics::_addressOf:
+    return inline_addressOf();
 
   default:
     // If you get here, it may be that someone has added a new intrinsic
@@ -6876,5 +6885,38 @@ bool LibraryCallKit::inline_profileBoolean() {
 bool LibraryCallKit::inline_isCompileConstant() {
   Node* n = argument(0);
   set_result(n->is_Con() ? intcon(1) : intcon(0));
+  return true;
+}
+
+bool LibraryCallKit::inline_sizeOf() {
+  Node* obj = argument(0);
+  Node* klass_node = load_object_klass(obj);
+
+  jint  layout_con = Klass::_lh_neutral_value;
+  Node* layout_val = get_layout_helper(klass_node, layout_con);
+
+  Node* size = NULL;
+  if (layout_val == NULL) {
+    // layout_con contains the layout helper itself, just reply it.
+    size = MakeConX(Klass::layout_helper_size_in_bytes(layout_con));
+  } else {
+    // Mask away _lh_instance_slow_path_bit
+    size = ConvI2X(layout_val);
+    assert((int)Klass::_lh_instance_slow_path_bit < BytesPerLong, "clear bit");
+    Node* mask = MakeConX(~ (intptr_t)right_n_bits(LogBytesPerLong));
+    size = _gvn.transform( new AndXNode(size, mask) );
+  }
+
+  set_result(size);
+  return true;
+}
+
+bool LibraryCallKit::inline_addressOf() {
+  Node* obj = argument(0);
+
+  Node* raw_val = _gvn.transform(new CastP2XNode(control(), obj));
+  Node* long_val = ConvX2L(raw_val);
+
+  set_result(long_val);
   return true;
 }

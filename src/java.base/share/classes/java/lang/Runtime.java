@@ -27,14 +27,17 @@
 package java.lang;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.StringTokenizer;
 
+import jdk.internal.HotSpotIntrinsicCandidate;
 import jdk.internal.access.SharedSecrets;
 import jdk.internal.loader.NativeLibrary;
 import jdk.internal.reflect.CallerSensitive;
@@ -808,6 +811,76 @@ public class Runtime {
         }
         ClassLoader.loadLibrary(fromClass, libname);
     }
+
+    /**
+     * Returns the runtime estimate of storage taken by a given object.
+     *
+     * @param obj object
+     * @return storage size in bytes
+     * @throws NullPointerException if {@code obj} is {@code null}
+     * @since 16
+     */
+    public static long sizeOf(Object obj) {
+        Objects.requireNonNull(obj);
+        return sizeOf0(obj);
+    }
+
+    @HotSpotIntrinsicCandidate
+    private static native long sizeOf0(Object obj);
+
+    /**
+     * Returns the current memory address taken by a given object.
+     * <p>
+     * In the presence of moving garbage collector, the address can change
+     * at any time, including during the call. As such, this method is only
+     * useful for low-level debugging and heap introspection.
+     *
+     * TODO: Is accepting null sane here?
+     *
+     * @param obj object
+     * @return current object address
+     * @since 16
+     */
+    public static long addressOf(Object obj) {
+        return addressOf0(obj);
+    }
+
+    @HotSpotIntrinsicCandidate
+    private static native long addressOf0(Object obj);
+
+    /**
+     * Returns the offset of the field within the object.
+     * TODO: Split by staticness?
+     *
+     * @param field field to poll
+     * @return the field offset in bytes
+     * @throws NullPointerException if {@code field} is {@code null}
+     * @since 16
+     */
+    public static long fieldOffsetOf(Field field) {
+        Objects.requireNonNull(field);
+        return fieldOffsetOf0(field);
+    }
+
+    // Reflection-like call, is not supposed to be fast?
+    private static native long fieldOffsetOf0(Field field);
+
+    /**
+     * Returns the size of the field within the object.
+     * TODO: Split by staticness?
+     *
+     * @param field field to poll
+     * @return the field size in bytes
+     * @throws NullPointerException if {@code field} is {@code null}
+     * @since 16
+     */
+    public static long fieldSizeOf(Field field) {
+        Objects.requireNonNull(field);
+        return fieldSizeOf0(field);
+    }
+
+    // Reflection-like call, is not supposed to be fast?
+    private static native long fieldSizeOf0(Field field);
 
     /**
      * Returns the version of the Java Runtime Environment as a {@link Version}.

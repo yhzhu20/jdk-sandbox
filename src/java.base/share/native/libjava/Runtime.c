@@ -70,3 +70,27 @@ Java_java_lang_Runtime_availableProcessors(JNIEnv *env, jobject this)
 {
     return JVM_ActiveProcessorCount();
 }
+
+JNIEXPORT jlong JNICALL
+Java_java_lang_Runtime_sizeOf0(JNIEnv *env, jobject this, jobject obj)
+{
+  return JVM_SizeOf(obj);
+}
+
+JNIEXPORT jlong JNICALL
+Java_java_lang_Runtime_addressOf0(JNIEnv *env, jobject this, jobject field)
+{
+  return JVM_AddressOf(field);
+}
+
+JNIEXPORT jlong JNICALL
+Java_java_lang_Runtime_fieldOffsetOf0(JNIEnv *env, jobject this, jobject field)
+{
+  return JVM_FieldOffsetOf(field);
+}
+
+JNIEXPORT jlong JNICALL
+Java_java_lang_Runtime_fieldSizeOf0(JNIEnv *env, jobject this, jobject field)
+{
+  return JVM_FieldSizeOf(field);
+}

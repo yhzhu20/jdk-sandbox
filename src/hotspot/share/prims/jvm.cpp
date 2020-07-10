@@ -538,6 +538,60 @@ JVM_ENTRY_NO_ENV(jint, JVM_ActiveProcessorCount(void))
   return os::active_processor_count();
 JVM_END
 
+JVM_ENTRY_NO_ENV(jlong, JVM_SizeOf(jobject obj))
+  JVMWrapper("JVM_SizeOf");
+  assert(obj != NULL, "object must not be NULL");
+
+  oop o = JNIHandles::resolve_non_null(obj);
+  return o->size()*HeapWordSize;
+JVM_END
+
+JVM_ENTRY_NO_ENV(jlong, JVM_AddressOf(jobject obj))
+  JVMWrapper("JVM_AddressOf");
+  assert(obj != NULL, "object must not be NULL");
+
+  oop o = JNIHandles::resolve_non_null(obj);
+  return cast_from_oop<jlong>(o);
+JVM_END
+
+JVM_ENTRY_NO_ENV(jlong, JVM_FieldOffsetOf(jobject field))
+  JVMWrapper("JVM_FieldOffsetOf");
+  assert(field != NULL, "field must not be NULL");
+
+  oop f    = JNIHandles::resolve_non_null(field);
+  oop m    = java_lang_reflect_Field::clazz(f);
+  Klass* k = java_lang_Class::as_Klass(m);
+  int slot = java_lang_reflect_Field::slot(f);
+
+  return InstanceKlass::cast(k)->field_offset(slot);
+JVM_END
+
+JVM_ENTRY_NO_ENV(jlong, JVM_FieldSizeOf(jobject field))
+  JVMWrapper("JVM_FieldSizeOf");
+  assert(field != NULL, "field must not be NULL");
+
+  oop f    = JNIHandles::resolve_non_null(field);
+  oop m    = java_lang_reflect_Field::clazz(f);
+  Klass* k = java_lang_Class::as_Klass(m);
+  int slot = java_lang_reflect_Field::slot(f);
+
+  Symbol* sig = InstanceKlass::cast(k)->field_signature(slot);
+  switch (sig->char_at(0)) {
+    case JVM_SIGNATURE_CLASS    :
+    case JVM_SIGNATURE_ARRAY    : return type2aelembytes(T_OBJECT);
+    case JVM_SIGNATURE_BYTE     : return type2aelembytes(T_BYTE);
+    case JVM_SIGNATURE_CHAR     : return type2aelembytes(T_CHAR);
+    case JVM_SIGNATURE_FLOAT    : return type2aelembytes(T_FLOAT);
+    case JVM_SIGNATURE_DOUBLE   : return type2aelembytes(T_DOUBLE);
+    case JVM_SIGNATURE_INT      : return type2aelembytes(T_INT);
+    case JVM_SIGNATURE_LONG     : return type2aelembytes(T_LONG);
+    case JVM_SIGNATURE_SHORT    : return type2aelembytes(T_SHORT);
+    case JVM_SIGNATURE_BOOLEAN  : return type2aelembytes(T_BOOLEAN);
+  }
+
+  ShouldNotReachHere();
+  return 0;
+JVM_END
 
 
 // java.lang.Throwable //////////////////////////////////////////////////////

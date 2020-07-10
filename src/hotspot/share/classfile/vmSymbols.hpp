@@ -128,6 +128,7 @@
   template(sun_net_www_ParseUtil,                     "sun/net/www/ParseUtil")                    \
   template(java_util_Iterator,                        "java/util/Iterator")                       \
   template(java_lang_Record,                          "java/lang/Record")                         \
+  template(java_lang_Runtime,                         "java/lang/Runtime")                        \
                                                                                                   \
   template(jdk_internal_loader_NativeLibraries,       "jdk/internal/loader/NativeLibraries")      \
   template(jdk_internal_loader_ClassLoaders_AppClassLoader,      "jdk/internal/loader/ClassLoaders$AppClassLoader")      \
@@ -503,6 +504,7 @@
   template(int_array_signature,                       "[I")                                       \
   template(object_void_signature,                     "(Ljava/lang/Object;)V")                    \
   template(object_int_signature,                      "(Ljava/lang/Object;)I")                    \
+  template(object_long_signature,                     "(Ljava/lang/Object;)J")                    \
   template(object_boolean_signature,                  "(Ljava/lang/Object;)Z")                    \
   template(object_object_signature,                   "(Ljava/lang/Object;)Ljava/lang/Object;")   \
   template(string_void_signature,                     "(Ljava/lang/String;)V")                    \
@@ -901,6 +903,14 @@
   do_intrinsic(_onSpinWait,               java_lang_Thread,       onSpinWait_name, onSpinWait_signature,         F_S)   \
    do_name(     onSpinWait_name,                                  "onSpinWait")                                         \
    do_alias(    onSpinWait_signature,                             void_method_signature)                                \
+                                                                                                                        \
+  do_intrinsic(_sizeOf,                   java_lang_Runtime,      sizeOf_name, sizeOf_signature,                 F_SN)  \
+   do_name(     sizeOf_name,                                      "sizeOf0")                                            \
+   do_alias(    sizeOf_signature,                                 object_long_signature)                                \
+                                                                                                                        \
+  do_intrinsic(_addressOf,                java_lang_Runtime,      addressOf_name, addressOf_signature,           F_SN)  \
+   do_name(     addressOf_name,                                   "addressOf0")                                         \
+   do_alias(    addressOf_signature,                              object_long_signature)                                \
                                                                                                                         \
   do_intrinsic(_copyOf,                   java_util_Arrays,       copyOf_name, copyOf_signature,                 F_S)   \
    do_name(     copyOf_name,                                     "copyOf")                                              \

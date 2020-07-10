@@ -63,7 +63,7 @@ extern "C" {
  *    class.
  */
 
-#define JVM_INTERFACE_VERSION 6
+#define JVM_INTERFACE_VERSION 7
 
 JNIEXPORT jint JNICALL
 JVM_GetInterfaceVersion(void);
@@ -157,6 +157,18 @@ JVM_MaxMemory(void);
 
 JNIEXPORT jint JNICALL
 JVM_ActiveProcessorCount(void);
+
+JNIEXPORT jlong JNICALL
+JVM_AddressOf(jobject obj);
+
+JNIEXPORT jlong JNICALL
+JVM_SizeOf(jobject obj);
+
+JNIEXPORT jlong JNICALL
+JVM_FieldOffsetOf(jobject field);
+
+JNIEXPORT jlong JNICALL
+JVM_FieldSizeOf(jobject field);
 
 JNIEXPORT void * JNICALL
 JVM_LoadLibrary(const char *name);
