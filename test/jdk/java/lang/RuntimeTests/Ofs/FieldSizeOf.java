@@ -55,32 +55,26 @@ public class FieldSizeOf {
         Field fObject  = Target.class.getDeclaredField("f_object");
 
         for (int c = 0; c < 100000; c++) {
-           assertEquals(1, Runtime.fieldSizeOf(fBoolean));
-           assertEquals(1, Runtime.fieldSizeOf(fByte));
-           assertEquals(2, Runtime.fieldSizeOf(fChar));
-           assertEquals(2, Runtime.fieldSizeOf(fShort));
-           assertEquals(4, Runtime.fieldSizeOf(fInt));
-           assertEquals(4, Runtime.fieldSizeOf(fFloat));
-           assertEquals(8, Runtime.fieldSizeOf(fLong));
-           assertEquals(8, Runtime.fieldSizeOf(fDouble));
-           assertEquals(4, Runtime.fieldSizeOf(fObject)); // TODO: Assumes compressed oops
+           RuntimeOfUtil.assertEquals(1, Runtime.fieldSizeOf(fBoolean));
+           RuntimeOfUtil.assertEquals(1, Runtime.fieldSizeOf(fByte));
+           RuntimeOfUtil.assertEquals(2, Runtime.fieldSizeOf(fChar));
+           RuntimeOfUtil.assertEquals(2, Runtime.fieldSizeOf(fShort));
+           RuntimeOfUtil.assertEquals(4, Runtime.fieldSizeOf(fInt));
+           RuntimeOfUtil.assertEquals(4, Runtime.fieldSizeOf(fFloat));
+           RuntimeOfUtil.assertEquals(8, Runtime.fieldSizeOf(fLong));
+           RuntimeOfUtil.assertEquals(8, Runtime.fieldSizeOf(fDouble));
+           RuntimeOfUtil.assertEquals(4, Runtime.fieldSizeOf(fObject)); // TODO: Assumes compressed oops
         }
     }
 
     private static void testNulls() {
-        for (int c = 0; c < 100000; c++) {
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             try {
                 Runtime.fieldSizeOf(null);
-                assertFail();
+                RuntimeOfUtil.assertFail();
             } catch (NullPointerException e) {
                 // expected
             }
-        }
-    }
-
-    private static void assertEquals(long expected, long actual) {
-        if (expected != actual) {
-            throw new IllegalStateException("Error: expected: " + expected + ", actual: " + actual);
         }
     }
 

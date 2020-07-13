@@ -48,30 +48,20 @@ public class FieldOffsetOf {
         int expected = Platform.is64bit() ? 12 : 8;
 
         Field f = Integer.class.getDeclaredField("value");
-        for (int c = 0; c < 100000; c++) {
-           assertEquals(expected, Runtime.fieldOffsetOf(f));
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertEquals(expected, Runtime.fieldOffsetOf(f));
         }
     }
 
     private static void testNulls() {
-        for (int c = 0; c < 100000; c++) {
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             try {
                 Runtime.fieldOffsetOf(null);
-                assertFail();
+                RuntimeOfUtil.assertFail();
             } catch (NullPointerException e) {
                 // expected
             }
         }
-    }
-
-    private static void assertEquals(long expected, long actual) {
-        if (expected != actual) {
-            throw new IllegalStateException("Error: expected: " + expected + ", actual: " + actual);
-        }
-    }
-
-    private static void assertFail() {
-        throw new IllegalStateException("Should not be here");
     }
 
 }

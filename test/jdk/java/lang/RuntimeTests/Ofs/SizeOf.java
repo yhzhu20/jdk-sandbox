@@ -47,16 +47,16 @@ public class SizeOf {
 
     private static void testSize_newObject() {
         int expected = Platform.is64bit() ? 16 : 8;
-        for (int c = 0; c < 100000; c++) {
-           assertEquals(expected, Runtime.sizeOf(new Object()));
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(new Object()));
         }
     }
 
     private static void testSize_localObject() {
         int expected = Platform.is64bit() ? 16 : 8;
         Object o = new Object();
-        for (int c = 0; c < 100000; c++) {
-           assertEquals(expected, Runtime.sizeOf(o));
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(o));
         }
     }
 
@@ -64,30 +64,20 @@ public class SizeOf {
 
     private static void testSize_fieldObject() {
         int expected = Platform.is64bit() ? 16 : 8;
-        for (int c = 0; c < 100000; c++) {
-           assertEquals(expected, Runtime.sizeOf(staticO));
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(staticO));
         }
     }
 
     private static void testNulls() {
-        for (int c = 0; c < 100000; c++) {
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             try {
                 Runtime.sizeOf(null);
-                assertFail();
+                RuntimeOfUtil.assertFail();
             } catch (NullPointerException e) {
                 // expected
             }
         }
-    }
-
-    private static void assertEquals(long expected, long actual) {
-        if (expected != actual) {
-            throw new IllegalStateException("Error: expected: " + expected + ", actual: " + actual);
-        }
-    }
-
-    private static void assertFail() {
-        throw new IllegalStateException("Should not be here");
     }
 
 }

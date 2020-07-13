@@ -46,46 +46,30 @@ public class AddressOf {
     }
 
     private static void testAddress_newObject() throws Exception {
-        for (int c = 0; c < 100000; c++) {
-           assertNotEquals(0, Runtime.addressOf(new Object()));
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertNotEquals(0, Runtime.addressOf(new Object()));
         }
     }
 
     private static void testAddress_localObject() throws Exception {
         Object o = new Object();
-        for (int c = 0; c < 100000; c++) {
-           assertNotEquals(0, Runtime.addressOf(o));
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertNotEquals(0, Runtime.addressOf(o));
         }
     }
 
     static Object staticO = new Object();
 
     private static void testAddress_fieldObject() throws Exception {
-        for (int c = 0; c < 100000; c++) {
-           assertNotEquals(0, Runtime.addressOf(staticO));
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertNotEquals(0, Runtime.addressOf(staticO));
         }
     }
 
     private static void testNulls() {
-        for (int c = 0; c < 100000; c++) {
-            assertEquals(0, Runtime.addressOf(null));
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertEquals(0, Runtime.addressOf(null));
         }
-    }
-
-    private static void assertEquals(long expected, long actual) {
-        if (expected != actual) {
-            throw new IllegalStateException("Error: expected: " + expected + ", actual: " + actual);
-        }
-    }
-
-    private static void assertNotEquals(long notExpected, long actual) {
-        if (notExpected == actual) {
-            throw new IllegalStateException("Error: not expected: " + notExpected + ", actual: " + actual);
-        }
-    }
-
-    private static void assertFail() {
-        throw new IllegalStateException("Should not be here");
     }
 
 }
