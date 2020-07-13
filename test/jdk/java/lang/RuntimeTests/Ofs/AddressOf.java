@@ -25,12 +25,12 @@
  * @test
  * @summary Test for Runtime.addressOf
  *
- * @run main/othervm -Xint AddressOf
- * @run main/othervm -XX:TieredStopAtLevel=1 AddressOf
- * @run main/othervm -XX:TieredStopAtLevel=2 AddressOf
- * @run main/othervm -XX:TieredStopAtLevel=3 AddressOf
- * @run main/othervm -XX:TieredStopAtLevel=4 AddressOf
- * @run main/othervm -XX:-TieredCompilation  AddressOf
+ * @run main/othervm -Xmx128m -Xint AddressOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=1 AddressOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=2 AddressOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=3 AddressOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=4 AddressOf
+ * @run main/othervm -Xmx128m -XX:-TieredCompilation  AddressOf
  */
 
 import java.lang.reflect.Field;
@@ -45,13 +45,13 @@ public class AddressOf {
     private static void testAddress() throws Exception {
         Field f = Integer.class.getDeclaredField("value");
         for (int c = 0; c < 100000; c++) {
-           assertNotEquals(Runtime.addressOf(new Object()), 0);
+           assertNotEquals(0, Runtime.addressOf(new Object()));
         }
     }
 
     private static void testNulls() {
         for (int c = 0; c < 100000; c++) {
-            assertEquals(Runtime.addressOf(null), 0);
+            assertEquals(0, Runtime.addressOf(null));
         }
     }
 

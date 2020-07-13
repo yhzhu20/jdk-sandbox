@@ -25,12 +25,12 @@
  * @test
  * @summary Test for Runtime.sizeOf
  *
- * @run main/othervm -Xint                   SizeOf
- * @run main/othervm -XX:TieredStopAtLevel=1 SizeOf
- * @run main/othervm -XX:TieredStopAtLevel=2 SizeOf
- * @run main/othervm -XX:TieredStopAtLevel=3 SizeOf
- * @run main/othervm -XX:TieredStopAtLevel=4 SizeOf
- * @run main/othervm -XX:-TieredCompilation  SizeOf
+ * @run main/othervm -Xmx128m -Xint                   SizeOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=1 SizeOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=2 SizeOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=3 SizeOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=4 SizeOf
+ * @run main/othervm -Xmx128m -XX:-TieredCompilation  SizeOf
  */
 
 public class SizeOf {
@@ -42,7 +42,7 @@ public class SizeOf {
 
     private static void testSize() {
         for (int c = 0; c < 100000; c++) {
-           assertEquals(Runtime.sizeOf(new Object()), 16);
+           assertEquals(16, Runtime.sizeOf(new Object()));
         }
     }
 

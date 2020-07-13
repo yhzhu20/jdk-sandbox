@@ -25,7 +25,7 @@
  * @test
  * @summary Test that Runtime intrinsics are defined correctly
  *
- * @run main/othervm -XX:+UnlockDiagnosticVMOptions -XX:+CheckIntrinsics CheckIntrinsics
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+CheckIntrinsics CheckIntrinsics
  */
 
 import java.lang.reflect.Field;

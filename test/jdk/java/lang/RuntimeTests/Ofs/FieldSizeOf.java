@@ -25,12 +25,12 @@
  * @test
  * @summary Test for Runtime.fieldSizeOf
  *
- * @run main/othervm -Xint                   FieldOffsetOf
- * @run main/othervm -XX:TieredStopAtLevel=1 FieldOffsetOf
- * @run main/othervm -XX:TieredStopAtLevel=2 FieldOffsetOf
- * @run main/othervm -XX:TieredStopAtLevel=3 FieldOffsetOf
- * @run main/othervm -XX:TieredStopAtLevel=4 FieldOffsetOf
- * @run main/othervm -XX:-TieredCompilation  FieldOffsetOf
+ * @run main/othervm -Xmx128m -Xint                   FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=1 FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=2 FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=3 FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=4 FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:-TieredCompilation  FieldOffsetOf
  */
 
 import java.lang.reflect.Field;
@@ -54,15 +54,15 @@ public class FieldSizeOf {
         Field fObject  = Target.class.getDeclaredField("f_object");
 
         for (int c = 0; c < 100000; c++) {
-           assertEquals(Runtime.fieldSizeOf(fBoolean), 1);
-           assertEquals(Runtime.fieldSizeOf(fByte),    1);
-           assertEquals(Runtime.fieldSizeOf(fChar),    2);
-           assertEquals(Runtime.fieldSizeOf(fShort),   2);
-           assertEquals(Runtime.fieldSizeOf(fInt),     4);
-           assertEquals(Runtime.fieldSizeOf(fFloat),   4);
-           assertEquals(Runtime.fieldSizeOf(fLong),    8);
-           assertEquals(Runtime.fieldSizeOf(fDouble),  8);
-           assertEquals(Runtime.fieldSizeOf(fObject),  4); // TODO: Assumes compressed oops
+           assertEquals(1, Runtime.fieldSizeOf(fBoolean));
+           assertEquals(1, Runtime.fieldSizeOf(fByte));
+           assertEquals(2, Runtime.fieldSizeOf(fChar));
+           assertEquals(2, Runtime.fieldSizeOf(fShort));
+           assertEquals(4, Runtime.fieldSizeOf(fInt));
+           assertEquals(4, Runtime.fieldSizeOf(fFloat));
+           assertEquals(8, Runtime.fieldSizeOf(fLong));
+           assertEquals(8, Runtime.fieldSizeOf(fDouble));
+           assertEquals(4, Runtime.fieldSizeOf(fObject)); // TODO: Assumes compressed oops
         }
     }
 

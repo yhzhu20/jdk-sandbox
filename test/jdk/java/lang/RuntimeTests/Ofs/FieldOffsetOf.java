@@ -45,7 +45,7 @@ public class FieldOffsetOf {
     private static void testOffsets() throws Exception {
         Field f = Integer.class.getDeclaredField("value");
         for (int c = 0; c < 100000; c++) {
-           assertEquals(Runtime.fieldOffsetOf(f), 12);
+           assertEquals(12, Runtime.fieldOffsetOf(f));
         }
     }
 
