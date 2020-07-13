@@ -25,8 +25,6 @@
  * @test
  * @summary Test for Runtime.sizeOf
  *
- * @run main/othervm -XX:+CheckIntrinsics    SizeOf
- *
  * @run main/othervm -Xint                   SizeOf
  * @run main/othervm -XX:TieredStopAtLevel=1 SizeOf
  * @run main/othervm -XX:TieredStopAtLevel=2 SizeOf

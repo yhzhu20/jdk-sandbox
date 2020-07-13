@@ -25,7 +25,6 @@
  * @test
  * @summary Test for Runtime.fieldSizeOf
  *
- * @run main/othervm -XX:+CheckIntrinsics    FieldOffsetOf
  * @run main/othervm -Xint                   FieldOffsetOf
  * @run main/othervm -XX:TieredStopAtLevel=1 FieldOffsetOf
  * @run main/othervm -XX:TieredStopAtLevel=2 FieldOffsetOf

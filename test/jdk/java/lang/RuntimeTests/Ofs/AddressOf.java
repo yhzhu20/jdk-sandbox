@@ -25,7 +25,6 @@
  * @test
  * @summary Test for Runtime.addressOf
  *
- * @run main/othervm -XX:+CheckIntrinsics AddressOf
  * @run main/othervm -Xint AddressOf
  * @run main/othervm -XX:TieredStopAtLevel=1 AddressOf
  * @run main/othervm -XX:TieredStopAtLevel=2 AddressOf

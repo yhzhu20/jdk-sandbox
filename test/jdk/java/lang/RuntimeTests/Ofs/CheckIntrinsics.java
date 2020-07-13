@@ -23,31 +23,15 @@
 
 /*
  * @test
- * @summary Test for Runtime.fieldOffsetOf
+ * @summary Test that Runtime intrinsics are defined correctly
  *
- * @run main/othervm -Xint                   FieldOffsetOf
- * @run main/othervm -XX:TieredStopAtLevel=1 FieldOffsetOf
- * @run main/othervm -XX:TieredStopAtLevel=2 FieldOffsetOf
- * @run main/othervm -XX:TieredStopAtLevel=3 FieldOffsetOf
- * @run main/othervm -XX:TieredStopAtLevel=4 FieldOffsetOf
- * @run main/othervm -XX:-TieredCompilation  FieldOffsetOf
+ * @run main/othervm -XX:+UnlockDiagnosticVMOptions -XX:+CheckIntrinsics CheckIntrinsics
  */
 
 import java.lang.reflect.Field;
 
-public class FieldOffsetOf {
-
+public class CheckIntrinsics {
     public static void main(String ... args) throws Exception {
-        Field f = Integer.class.getDeclaredField("value");
-        for (int c = 0; c < 100000; c++) {
-           assertEquals(Runtime.fieldOffsetOf(f), 12);
-        }
+        // Deliberately empty, the checks happen at startup.
     }
-
-    public static void assertEquals(long expected, long actual) {
-        if (expected != actual) {
-            throw new IllegalStateException("Error: expected: " + expected + ", actual: " + actual);
-        }
-    }
-
 }
