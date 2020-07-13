@@ -39,15 +39,33 @@ import jdk.test.lib.Platform;
 public class SizeOf {
 
     public static void main(String ... args) {
-        testSize();
+        testSize_newObject();
+        testSize_localObject();
+        testSize_fieldObject();
         testNulls();
     }
 
-    private static void testSize() {
+    private static void testSize_newObject() {
         int expected = Platform.is64bit() ? 16 : 8;
-
         for (int c = 0; c < 100000; c++) {
            assertEquals(expected, Runtime.sizeOf(new Object()));
+        }
+    }
+
+    private static void testSize_localObject() {
+        int expected = Platform.is64bit() ? 16 : 8;
+        Object o = new Object();
+        for (int c = 0; c < 100000; c++) {
+           assertEquals(expected, Runtime.sizeOf(o));
+        }
+    }
+
+    static Object staticO = new Object();
+
+    private static void testSize_fieldObject() {
+        int expected = Platform.is64bit() ? 16 : 8;
+        for (int c = 0; c < 100000; c++) {
+           assertEquals(expected, Runtime.sizeOf(staticO));
         }
     }
 

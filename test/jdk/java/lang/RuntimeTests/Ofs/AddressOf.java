@@ -39,14 +39,30 @@ import java.lang.reflect.Field;
 public class AddressOf {
 
     public static void main(String ... args) throws Exception {
-        testAddress();
+        testAddress_newObject();
+        testAddress_localObject();
+        testAddress_fieldObject();
         testNulls();
     }
 
-    private static void testAddress() throws Exception {
-        Field f = Integer.class.getDeclaredField("value");
+    private static void testAddress_newObject() throws Exception {
         for (int c = 0; c < 100000; c++) {
            assertNotEquals(0, Runtime.addressOf(new Object()));
+        }
+    }
+
+    private static void testAddress_localObject() throws Exception {
+        Object o = new Object();
+        for (int c = 0; c < 100000; c++) {
+           assertNotEquals(0, Runtime.addressOf(o));
+        }
+    }
+
+    static Object staticO = new Object();
+
+    private static void testAddress_fieldObject() throws Exception {
+        for (int c = 0; c < 100000; c++) {
+           assertNotEquals(0, Runtime.addressOf(staticO));
         }
     }
 
