@@ -38,16 +38,37 @@ import java.lang.reflect.Field;
 public class AddressOf {
 
     public static void main(String ... args) throws Exception {
+        testAddress();
+        testNulls();
+    }
+
+    private static void testAddress() throws Exception {
         Field f = Integer.class.getDeclaredField("value");
         for (int c = 0; c < 100000; c++) {
-           assertGreater(Runtime.addressOf(new Object()), 0);
+           assertNotEquals(Runtime.addressOf(new Object()), 0);
         }
     }
 
-    public static void assertGreater(long left, long right) {
-        if (left <= right) {
-            throw new IllegalStateException("Error: left: " + left + ", right: " + right);
+    private static void testNulls() {
+        for (int c = 0; c < 100000; c++) {
+            assertEquals(Runtime.addressOf(null), 0);
         }
+    }
+
+    private static void assertEquals(long expected, long actual) {
+        if (expected != actual) {
+            throw new IllegalStateException("Error: expected: " + expected + ", actual: " + actual);
+        }
+    }
+
+    private static void assertNotEquals(long notExpected, long actual) {
+        if (notExpected == actual) {
+            throw new IllegalStateException("Error: not expected: " + notExpected + ", actual: " + actual);
+        }
+    }
+
+    private static void assertFail() {
+        throw new IllegalStateException("Should not be here");
     }
 
 }

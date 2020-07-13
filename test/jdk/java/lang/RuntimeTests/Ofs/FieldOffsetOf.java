@@ -25,12 +25,12 @@
  * @test
  * @summary Test for Runtime.fieldOffsetOf
  *
- * @run main/othervm -Xint                   FieldOffsetOf
- * @run main/othervm -XX:TieredStopAtLevel=1 FieldOffsetOf
- * @run main/othervm -XX:TieredStopAtLevel=2 FieldOffsetOf
- * @run main/othervm -XX:TieredStopAtLevel=3 FieldOffsetOf
- * @run main/othervm -XX:TieredStopAtLevel=4 FieldOffsetOf
- * @run main/othervm -XX:-TieredCompilation  FieldOffsetOf
+ * @run main/othervm -Xmx128m -Xint                   FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=1 FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=2 FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=3 FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=4 FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:-TieredCompilation  FieldOffsetOf
  */
 
 import java.lang.reflect.Field;
@@ -38,16 +38,36 @@ import java.lang.reflect.Field;
 public class FieldOffsetOf {
 
     public static void main(String ... args) throws Exception {
+        testOffsets();
+        testNulls();
+    }
+
+    private static void testOffsets() throws Exception {
         Field f = Integer.class.getDeclaredField("value");
         for (int c = 0; c < 100000; c++) {
            assertEquals(Runtime.fieldOffsetOf(f), 12);
         }
     }
 
-    public static void assertEquals(long expected, long actual) {
+    private static void testNulls() {
+        for (int c = 0; c < 100000; c++) {
+            try {
+                Runtime.fieldOffsetOf(null);
+                assertFail();
+            } catch (NullPointerException e) {
+                // expected
+            }
+        }
+    }
+
+    private static void assertEquals(long expected, long actual) {
         if (expected != actual) {
             throw new IllegalStateException("Error: expected: " + expected + ", actual: " + actual);
         }
+    }
+
+    private static void assertFail() {
+        throw new IllegalStateException("Should not be here");
     }
 
 }

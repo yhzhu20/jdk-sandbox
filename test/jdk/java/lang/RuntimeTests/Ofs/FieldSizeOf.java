@@ -38,6 +38,11 @@ import java.lang.reflect.Field;
 public class FieldSizeOf {
 
     public static void main(String ... args) throws Exception {
+        testOffsets();
+        testNulls();
+    }
+
+    private static testOffsets() throws Exception {
         Field fBoolean = Target.class.getDeclaredField("f_boolean");
         Field fByte    = Target.class.getDeclaredField("f_byte");
         Field fChar    = Target.class.getDeclaredField("f_char");
@@ -61,7 +66,18 @@ public class FieldSizeOf {
         }
     }
 
-    public static void assertEquals(long expected, long actual) {
+    private static void testNulls() {
+        for (int c = 0; c < 100000; c++) {
+            try {
+                Runtime.fieldSizeOf(null);
+                assertFail();
+            } catch (NullPointerException e) {
+                // expected
+            }
+        }
+    }
+
+    private static void assertEquals(long expected, long actual) {
         if (expected != actual) {
             throw new IllegalStateException("Error: expected: " + expected + ", actual: " + actual);
         }

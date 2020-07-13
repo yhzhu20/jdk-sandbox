@@ -835,10 +835,8 @@ public class Runtime {
      * at any time, including during the call. As such, this method is only
      * useful for low-level debugging and heap introspection.
      *
-     * TODO: Is accepting null sane here?
-     *
      * @param obj object
-     * @return current object address
+     * @return current object address, or "0" if {@code obj} is @{code null}
      * @since 16
      */
     public static long addressOf(Object obj) {
