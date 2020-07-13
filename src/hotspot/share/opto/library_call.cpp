@@ -6915,7 +6915,7 @@ bool LibraryCallKit::inline_sizeOf() {
 bool LibraryCallKit::inline_addressOf() {
   Node* obj = argument(0);
 
-  Node* raw_val = _gvn.transform(new CastP2XNode(control(), obj));
+  Node* raw_val = _gvn.transform(new CastP2XNode(NULL, obj));
   Node* long_val = ConvX2L(raw_val);
 
   set_result(long_val);
