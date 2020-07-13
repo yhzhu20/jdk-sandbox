@@ -6898,13 +6898,14 @@ bool LibraryCallKit::inline_sizeOf() {
   Node* size = NULL;
   if (layout_val == NULL) {
     // layout_con contains the layout helper itself, just reply it.
-    size = MakeConX(Klass::layout_helper_size_in_bytes(layout_con));
+    size = longcon(Klass::layout_helper_size_in_bytes(layout_con));
   } else {
     // Mask away _lh_instance_slow_path_bit
     size = ConvI2X(layout_val);
     assert((int)Klass::_lh_instance_slow_path_bit < BytesPerLong, "clear bit");
     Node* mask = MakeConX(~ (intptr_t)right_n_bits(LogBytesPerLong));
     size = _gvn.transform( new AndXNode(size, mask) );
+    size = ConvX2L(size);
   }
 
   set_result(size);

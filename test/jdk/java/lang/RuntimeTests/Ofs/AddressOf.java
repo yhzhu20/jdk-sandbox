@@ -24,6 +24,7 @@
 /*
  * @test
  * @summary Test for Runtime.addressOf
+ * @library /test/lib
  *
  * @run main/othervm -Xmx128m -Xint AddressOf
  * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=1 AddressOf

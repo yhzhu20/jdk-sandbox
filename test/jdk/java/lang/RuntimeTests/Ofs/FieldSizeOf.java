@@ -24,6 +24,7 @@
 /*
  * @test
  * @summary Test for Runtime.fieldSizeOf
+ * @library /test/lib
  *
  * @run main/othervm -Xmx128m -Xint                   FieldOffsetOf
  * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=1 FieldOffsetOf

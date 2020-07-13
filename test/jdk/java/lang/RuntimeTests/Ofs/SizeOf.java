@@ -24,6 +24,7 @@
 /*
  * @test
  * @summary Test for Runtime.sizeOf
+ * @library /test/lib
  *
  * @run main/othervm -Xmx128m -Xint                   SizeOf
  * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=1 SizeOf
@@ -33,6 +34,8 @@
  * @run main/othervm -Xmx128m -XX:-TieredCompilation  SizeOf
  */
 
+import jdk.test.lib.Platform;
+
 public class SizeOf {
 
     public static void main(String ... args) {
@@ -41,8 +44,10 @@ public class SizeOf {
     }
 
     private static void testSize() {
+        int expected = Platform.is64bit() ? 16 : 8;
+
         for (int c = 0; c < 100000; c++) {
-           assertEquals(16, Runtime.sizeOf(new Object()));
+           assertEquals(expected, Runtime.sizeOf(new Object()));
         }
     }
 

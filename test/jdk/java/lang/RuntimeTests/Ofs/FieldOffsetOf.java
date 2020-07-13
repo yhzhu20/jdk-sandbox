@@ -24,6 +24,7 @@
 /*
  * @test
  * @summary Test for Runtime.fieldOffsetOf
+ * @library /test/lib
  *
  * @run main/othervm -Xmx128m -Xint                   FieldOffsetOf
  * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=1 FieldOffsetOf
@@ -34,6 +35,7 @@
  */
 
 import java.lang.reflect.Field;
+import jdk.test.lib.Platform;
 
 public class FieldOffsetOf {
 
@@ -43,9 +45,11 @@ public class FieldOffsetOf {
     }
 
     private static void testOffsets() throws Exception {
+        int expected = Platform.is64bit() ? 12 : 8;
+
         Field f = Integer.class.getDeclaredField("value");
         for (int c = 0; c < 100000; c++) {
-           assertEquals(12, Runtime.fieldOffsetOf(f));
+           assertEquals(expected, Runtime.fieldOffsetOf(f));
         }
     }
 
