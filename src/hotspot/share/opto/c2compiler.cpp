@@ -645,8 +645,10 @@ bool C2Compiler::is_intrinsic_supported(const methodHandle& method, bool is_virt
   case vmIntrinsics::_isCompileConstant:
   case vmIntrinsics::_Preconditions_checkIndex:
   case vmIntrinsics::_sizeOf:
-  case vmIntrinsics::_addressOf:
     break;
+  case vmIntrinsics::_addressOf:
+    // temporarily disabled until G1 collision is resolved
+    return false;
   default:
     return false;
   }
