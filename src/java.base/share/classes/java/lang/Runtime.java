@@ -816,7 +816,7 @@ public class Runtime {
      * Returns the runtime estimate of storage taken by a given object.
      *
      * @param obj object
-     * @return storage size in bytes
+     * @return storage size in bytes, or {@code -1} if storage size is unknown
      * @throws NullPointerException if {@code obj} is {@code null}
      * @since 16
      */
@@ -836,7 +836,7 @@ public class Runtime {
      * useful for low-level debugging and heap introspection.
      *
      * @param obj object
-     * @return current object address, or "0" if {@code obj} is @{code null}
+     * @return current object address, or "0" if {@code obj} is @{code null}, or {@code -1} if address is unknown
      * @since 16
      */
     public static long addressOf(Object obj) {
@@ -851,7 +851,7 @@ public class Runtime {
      * TODO: Split by staticness?
      *
      * @param field field to poll
-     * @return the field offset in bytes
+     * @return the field offset in bytes, or {@code -1} if field offset is unknown
      * @throws NullPointerException if {@code field} is {@code null}
      * @since 16
      */
@@ -868,7 +868,7 @@ public class Runtime {
      * TODO: Split by staticness?
      *
      * @param field field to poll
-     * @return the field size in bytes
+     * @return the field size in bytes, or {@code -1} if field size is unknown
      * @throws NullPointerException if {@code field} is {@code null}
      * @since 16
      */

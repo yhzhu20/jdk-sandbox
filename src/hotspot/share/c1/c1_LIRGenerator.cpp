@@ -1325,13 +1325,17 @@ void LIRGenerator::do_addressOf(Intrinsic* x) {
   value.load_item();
   LIR_Opr reg = rlock_result(x);
 
+  if (RuntimeOfs) {
 #ifdef _LP64
-  __ move(value.result(), reg, NULL);
+    __ move(value.result(), reg, NULL);
 #else
-  LIR_Opr res = new_register(T_LONG);
-  __ convert(Bytecodes::_i2l, value.result(), res);
-  __ move(res, reg, NULL);
+    LIR_Opr res = new_register(T_LONG);
+    __ convert(Bytecodes::_i2l, value.result(), res);
+    __ move(res, reg, NULL);
 #endif
+  } else {
+    __ move(LIR_OprFact::longConst(-1), reg, NULL);
+  }
 }
 
 void LIRGenerator::do_sizeOf(Intrinsic* x) {
