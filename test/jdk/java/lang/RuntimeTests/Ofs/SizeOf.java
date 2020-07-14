@@ -42,6 +42,15 @@ public class SizeOf {
         testSize_newObject();
         testSize_localObject();
         testSize_fieldObject();
+
+        testSize_newSmallByteArray();
+        testSize_localSmallByteArray();
+        testSize_fieldSmallByteArray();
+
+        testSize_newSmallObjArray();
+        testSize_localSmallObjArray();
+        testSize_fieldSmallObjArray();
+
         testNulls();
     }
 
@@ -66,6 +75,54 @@ public class SizeOf {
         int expected = Platform.is64bit() ? 16 : 8;
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(staticO));
+        }
+    }
+
+    private static void testSize_newSmallByteArray() {
+        int expected = 1024 + 16;
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(new byte[1024]));
+        }
+    }
+
+    private static void testSize_localSmallByteArray() {
+        byte[] arr = new byte[1024];
+        int expected = arr.length + 16;
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(arr));
+        }
+    }
+
+    static byte[] smallArr = new byte[1024];
+
+    private static void testSize_fieldSmallByteArray() {
+        int expected = smallArr.length + 16;
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(smallArr));
+        }
+    }
+
+    private static void testSize_newSmallObjArray() {
+        int expected = 1024*4 + 16;
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(new Object[1024]));
+        }
+    }
+
+    private static void testSize_localSmallObjArray() {
+        Object[] arr = new Object[1024];
+        int expected = arr.length*4 + 16;
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(arr));
+        }
+    }
+
+    static Object[] smallObjArr = new Object[1024];
+
+    private static void testSize_fieldSmallObjArray() {
+        int expected = smallArr.length*4 + 16;
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(smallObjArr));
         }
     }
 

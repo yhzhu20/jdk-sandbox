@@ -152,8 +152,6 @@ bool Compiler::is_intrinsic_supported(const methodHandle& method) {
   case vmIntrinsics::_isInstance:
   case vmIntrinsics::_isPrimitive:
   case vmIntrinsics::_currentThread:
-  case vmIntrinsics::_addressOf:
-  case vmIntrinsics::_sizeOf:
   case vmIntrinsics::_dabs:
   case vmIntrinsics::_dsqrt:
   case vmIntrinsics::_dsin:
@@ -230,6 +228,11 @@ bool Compiler::is_intrinsic_supported(const methodHandle& method) {
 #endif
 #endif
     break;
+  case vmIntrinsics::_addressOf:
+    break;
+  case vmIntrinsics::_sizeOf:
+    // temporarily disabled until it can handle arrays
+    return false;
   default:
     return false; // Intrinsics not on the previous list are not available.
   }

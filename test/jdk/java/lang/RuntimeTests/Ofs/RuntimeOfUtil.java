@@ -29,13 +29,17 @@ public class RuntimeOfUtil {
 
     public static void assertEquals(long expected, long actual) {
         if (expected != actual) {
-            throw new IllegalStateException("Error: expected: " + expected + ", actual: " + actual);
+            throw new IllegalStateException(
+               "Error: expected: " + expected + " (" + Long.toHexString(expected) +
+                "), actual: " + actual + " (" + Long.toHexString(actual) + ")");
         }
     }
 
     public static void assertNotEquals(long notExpected, long actual) {
         if (notExpected == actual) {
-            throw new IllegalStateException("Error: not expected: " + notExpected + ", actual: " + actual);
+            throw new IllegalStateException(
+               "Error: not expected: " + notExpected + " (" + Long.toHexString(notExpected) +
+                "), actual: " + actual + " (" + Long.toHexString(actual) + ")");
         }
     }
 
