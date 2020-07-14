@@ -34,6 +34,20 @@
  * @run main/othervm -Xmx128m -XX:-TieredCompilation  SizeOf
  */
 
+/*
+ * @test
+ * @summary Test for Runtime.sizeOf, when allocations go to slowpath
+ * @library /test/lib
+ * @requires vm.debug
+ *
+ * @run main/othervm -Xmx128m -Xint                   -XX:FastAllocateSizeLimit=0 SizeOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=1 -XX:FastAllocateSizeLimit=0 SizeOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=2 -XX:FastAllocateSizeLimit=0 SizeOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=3 -XX:FastAllocateSizeLimit=0 SizeOf
+ * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=4 -XX:FastAllocateSizeLimit=0 SizeOf
+ * @run main/othervm -Xmx128m -XX:-TieredCompilation  -XX:FastAllocateSizeLimit=0 SizeOf
+ */
+
 import jdk.test.lib.Platform;
 
 public class SizeOf {
