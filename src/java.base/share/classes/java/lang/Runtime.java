@@ -32,7 +32,11 @@ import java.math.BigInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.StringTokenizer;
@@ -827,6 +831,62 @@ public class Runtime {
 
     @HotSpotIntrinsicCandidate
     private static native long sizeOf0(Object obj);
+
+    /**
+     * Returns the runtime estimate of storage taken by a given object and all objects referenced by it.
+     *
+     * @param obj starting object
+     * @return storage size in bytes, or {@code -1} if storage size is unknown
+     * @throws NullPointerException if {@code obj} is {@code null}
+     * @since 16
+     */
+    public static long deepSizeOf(Object obj) {
+        Objects.requireNonNull(obj);
+
+        Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<Object, Boolean>());
+        List<Object> curLayer = new ArrayList<>();
+        List<Object> newLayer = new ArrayList<>();
+
+        long totalSize = 0;
+
+        // Seed the scan with the root object
+        visited.add(obj);
+        totalSize += sizeOf(obj);
+        curLayer.add(obj);
+
+        while (!curLayer.isEmpty()) {
+            newLayer.clear();
+            for (Object o : curLayer) {
+                if (o.getClass().isArray()) {
+                    if (o.getClass().getComponentType().isPrimitive()) {
+                        // Nothing to do here
+                        continue;
+                    }
+
+                    for (Object e : (Object[])o) {
+                        if (e != null && visited.add(e)) {
+                            totalSize += sizeOf(e);
+                            newLayer.add(e);
+                        }
+                    }
+                } else {
+                    for (Object e : getReferences0(o)) {
+                        if (e != null && visited.add(e)) {
+                            totalSize += sizeOf(e);
+                            newLayer.add(e);
+                        }
+                    }
+                }
+            }
+            curLayer.clear();
+            curLayer.addAll(newLayer);
+        }
+
+        return totalSize;
+    }
+
+    // TODO: Cache the array somehow, to minimize allocations...
+    private static native Object[] getReferences0(Object obj);
 
     /**
      * Returns the current memory address taken by a given object.

@@ -44,6 +44,7 @@
 #include "logging/log.hpp"
 #include "memory/dynamicArchive.hpp"
 #include "memory/heapShared.hpp"
+#include "memory/iterator.inline.hpp"
 #include "memory/oopFactory.hpp"
 #include "memory/referenceType.hpp"
 #include "memory/resourceArea.hpp"
@@ -51,7 +52,7 @@
 #include "oops/access.inline.hpp"
 #include "oops/constantPool.hpp"
 #include "oops/fieldStreams.inline.hpp"
-#include "oops/instanceKlass.hpp"
+#include "oops/instanceKlass.inline.hpp"
 #include "oops/method.hpp"
 #include "oops/recordComponent.hpp"
 #include "oops/objArrayKlass.hpp"
@@ -597,6 +598,93 @@ JVM_ENTRY_NO_ENV(jlong, JVM_FieldSizeOf(jobject field))
   return 0;
 JVM_END
 
+class GetReferencedObjectsClosure : public BasicOopIterateClosure {
+private:
+  objArrayOop _result;
+  int _count;
+public:
+  GetReferencedObjectsClosure(objArrayOop result) : _result(result), _count(0) {}
+
+  template <typename T> void do_oop_nv(T* p) {
+    oop o = HeapAccess<>::oop_load(p);
+    _result->obj_at_put(_count++, o);
+  }
+
+  virtual void do_oop(oop* p)       { do_oop_nv(p); }
+  virtual void do_oop(narrowOop* p) { do_oop_nv(p); }
+
+  // Don't use the oop verification code in the oop_oop_iterate framework.
+  debug_only(virtual bool should_verify_oops() { return false; })
+};
+
+class CountReferencedObjectsClosure : public BasicOopIterateClosure {
+private:
+  int _count;
+public:
+  CountReferencedObjectsClosure() : _count(0) {}
+
+  template <typename T> void do_oop_nv(T* p) {
+    _count++;
+  }
+
+  virtual void do_oop(oop* p)       { do_oop_nv(p); }
+  virtual void do_oop(narrowOop* p) { do_oop_nv(p); }
+
+  // Don't use the oop verification code in the oop_oop_iterate framework.
+  debug_only(virtual bool should_verify_oops() { return false; })
+  
+  int count() { return _count; }
+};
+
+JVM_ENTRY(jobjectArray, JVM_GetReferencedObjects(JNIEnv *env, jobject obj))
+  JVMWrapper("JVM_GetReferencedObjects");
+  assert(obj != NULL, "object must not be NULL");
+
+  JvmtiVMObjectAllocEventCollector oam;
+
+  oop o = JNIHandles::resolve_non_null(obj);
+
+  Klass* klass = o->klass();
+  if (!RuntimeOfs || !klass->is_instance_klass()) {
+    oop result = oopFactory::new_objArray(SystemDictionary::Object_klass(), 0, CHECK_NULL);
+    return (jobjectArray)JNIHandles::make_local(env, result);
+  }
+
+  InstanceKlass* k = InstanceKlass::cast(klass);
+
+  int count = 0;
+
+#ifdef _LP64
+  if (UseCompressedOops) {
+    CountReferencedObjectsClosure count_cl;
+    k->oop_oop_iterate<narrowOop>(o, &count_cl);
+    count = count_cl.count();
+  } else
+#endif
+  {
+    CountReferencedObjectsClosure count_cl;
+    k->oop_oop_iterate<oop>(o, &count_cl);
+    count = count_cl.count();
+  }
+
+  objArrayOop r = oopFactory::new_objArray(SystemDictionary::Object_klass(), count, CHECK_NULL);
+
+  // Resolve again in case the object have moved during array allocation (which may break for GC)
+  o = JNIHandles::resolve_non_null(obj);
+
+#ifdef _LP64
+  if (UseCompressedOops) {
+    GetReferencedObjectsClosure get_cl(r);
+    k->oop_oop_iterate<narrowOop>(o, &get_cl);
+  } else
+#endif
+  {
+    GetReferencedObjectsClosure get_cl(r);
+    k->oop_oop_iterate<oop>(o, &get_cl);
+  }
+
+  return (jobjectArray)JNIHandles::make_local(env, r);
+JVM_END
 
 // java.lang.Throwable //////////////////////////////////////////////////////
 

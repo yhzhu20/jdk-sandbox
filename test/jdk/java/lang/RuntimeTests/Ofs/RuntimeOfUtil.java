@@ -25,6 +25,7 @@ import java.lang.reflect.Field;
 
 public class RuntimeOfUtil {
 
+    public static final int SHORT_ITERS = 10_000;
     public static final int ITERS = 1_000_000;
 
     public static void assertEquals(long expected, long actual) {

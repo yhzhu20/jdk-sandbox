@@ -77,6 +77,12 @@ Java_java_lang_Runtime_sizeOf0(JNIEnv *env, jobject this, jobject obj)
   return JVM_SizeOf(obj);
 }
 
+JNIEXPORT jobjectArray JNICALL
+Java_java_lang_Runtime_getReferences0(JNIEnv *env, jobject this, jobject obj)
+{
+  return JVM_GetReferencedObjects(env, obj);
+}
+
 JNIEXPORT jlong JNICALL
 Java_java_lang_Runtime_addressOf0(JNIEnv *env, jobject this, jobject field)
 {
