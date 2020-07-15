@@ -843,6 +843,12 @@ public class Runtime {
     public static long deepSizeOf(Object obj) {
         Objects.requireNonNull(obj);
 
+        long rootSize = sizeOf(obj);
+        if (rootSize == -1) {
+            // Result is imprecise.
+            return -1;
+        }
+
         Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<Object, Boolean>());
         List<Object> curLayer = new ArrayList<>();
         List<Object> newLayer = new ArrayList<>();
@@ -851,7 +857,7 @@ public class Runtime {
 
         // Seed the scan with the root object
         visited.add(obj);
-        totalSize += sizeOf(obj);
+        totalSize += rootSize;
         curLayer.add(obj);
 
         while (!curLayer.isEmpty()) {
@@ -865,14 +871,24 @@ public class Runtime {
 
                     for (Object e : (Object[])o) {
                         if (e != null && visited.add(e)) {
-                            totalSize += sizeOf(e);
+                            long size = sizeOf(e);
+                            if (size == -1) {
+                                // Result is imprecise.
+                                return -1;
+                            }
+                            totalSize += size;
                             newLayer.add(e);
                         }
                     }
                 } else {
                     for (Object e : getReferences0(o)) {
                         if (e != null && visited.add(e)) {
-                            totalSize += sizeOf(e);
+                            long size = sizeOf(e);
+                            if (size == -1) {
+                                // Result is imprecise.
+                                return -1;
+                            }
+                            totalSize += size;
                             newLayer.add(e);
                         }
                     }
