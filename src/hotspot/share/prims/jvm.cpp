@@ -617,25 +617,6 @@ public:
   debug_only(virtual bool should_verify_oops() { return false; })
 };
 
-class CountReferencedObjectsClosure : public BasicOopIterateClosure {
-private:
-  int _count;
-public:
-  CountReferencedObjectsClosure() : _count(0) {}
-
-  template <typename T> void do_oop_nv(T* p) {
-    _count++;
-  }
-
-  virtual void do_oop(oop* p)       { do_oop_nv(p); }
-  virtual void do_oop(narrowOop* p) { do_oop_nv(p); }
-
-  // Don't use the oop verification code in the oop_oop_iterate framework.
-  debug_only(virtual bool should_verify_oops() { return false; })
-  
-  int count() { return _count; }
-};
-
 JVM_ENTRY(jobjectArray, JVM_GetReferencedObjects(JNIEnv *env, jobject obj))
   JVMWrapper("JVM_GetReferencedObjects");
   assert(obj != NULL, "object must not be NULL");
@@ -652,19 +633,10 @@ JVM_ENTRY(jobjectArray, JVM_GetReferencedObjects(JNIEnv *env, jobject obj))
 
   InstanceKlass* k = InstanceKlass::cast(klass);
 
-  int count = 0;
-
-#ifdef _LP64
-  if (UseCompressedOops) {
-    CountReferencedObjectsClosure count_cl;
-    k->oop_oop_iterate<narrowOop>(o, &count_cl);
-    count = count_cl.count();
-  } else
-#endif
-  {
-    CountReferencedObjectsClosure count_cl;
-    k->oop_oop_iterate<oop>(o, &count_cl);
-    count = count_cl.count();
+  int count = k->nonstatic_oop_field_count();
+  if (count == 0) {
+    oop result = oopFactory::new_objArray(SystemDictionary::Object_klass(), 0, CHECK_NULL);
+    return (jobjectArray)JNIHandles::make_local(env, result);
   }
 
   objArrayOop r = oopFactory::new_objArray(SystemDictionary::Object_klass(), count, CHECK_NULL);
