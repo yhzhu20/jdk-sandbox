@@ -32,7 +32,8 @@ import java.math.BigInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -850,52 +851,47 @@ public class Runtime {
         }
 
         Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<Object, Boolean>());
-        List<Object> curLayer = new ArrayList<>();
-        List<Object> newLayer = new ArrayList<>();
+        Deque<Object> q = new ArrayDeque<>();
 
         long totalSize = 0;
 
         // Seed the scan with the root object
         visited.add(obj);
         totalSize += rootSize;
-        curLayer.add(obj);
+        q.add(obj);
 
-        while (!curLayer.isEmpty()) {
-            newLayer.clear();
-            for (Object o : curLayer) {
-                if (o.getClass().isArray()) {
-                    if (o.getClass().getComponentType().isPrimitive()) {
-                        // Nothing to do here
-                        continue;
-                    }
+        while (!q.isEmpty()) {
+            Object o = q.pop();
+            if (o.getClass().isArray()) {
+                if (o.getClass().getComponentType().isPrimitive()) {
+                    // Nothing to do here
+                    continue;
+                }
 
-                    for (Object e : (Object[])o) {
-                        if (e != null && visited.add(e)) {
-                            long size = sizeOf(e);
-                            if (size == -1) {
-                                // Result is imprecise.
-                                return -1;
-                            }
-                            totalSize += size;
-                            newLayer.add(e);
+                for (Object e : (Object[])o) {
+                    if (e != null && visited.add(e)) {
+                        long size = sizeOf(e);
+                        if (size == -1) {
+                            // Result is imprecise.
+                            return -1;
                         }
+                        totalSize += size;
+                        q.push(e);
                     }
-                } else {
-                    for (Object e : getReferences0(o)) {
-                        if (e != null && visited.add(e)) {
-                            long size = sizeOf(e);
-                            if (size == -1) {
-                                // Result is imprecise.
-                                return -1;
-                            }
-                            totalSize += size;
-                            newLayer.add(e);
+                }
+            } else {
+                for (Object e : getReferences0(o)) {
+                    if (e != null && visited.add(e)) {
+                        long size = sizeOf(e);
+                        if (size == -1) {
+                            // Result is imprecise.
+                            return -1;
                         }
+                        totalSize += size;
+                        q.push(e);
                     }
                 }
             }
-            curLayer.clear();
-            curLayer.addAll(newLayer);
         }
 
         return totalSize;

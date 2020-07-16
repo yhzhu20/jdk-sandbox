@@ -46,6 +46,8 @@ public class DeepSizeOf {
         testNodeChain(10);
         testNodeChain(100);
 
+        testNodeTree();
+
         testObjArray(0);
         testObjArray(1);
         testObjArray(10);
@@ -75,6 +77,18 @@ public class DeepSizeOf {
     private static class Node {
        Node next;
        public Node(Node n) { next = n; }
+    }
+
+    private static void testNodeTree() {
+        TreeNode r = new TreeNode(new TreeNode(new TreeNode(null, null), null), new TreeNode(null, null));
+        for (int c = 0; c < RuntimeOfUtil.SHORT_ITERS; c++) {
+            RuntimeOfUtil.assertEquals(Runtime.sizeOf(r)*4, Runtime.deepSizeOf(r));
+        }
+    }
+
+    private static class TreeNode {
+       TreeNode l, r;
+       public TreeNode(TreeNode l, TreeNode r) { this.l = l; this.r = r; }
     }
 
     private static void testObjArray(int size) {
