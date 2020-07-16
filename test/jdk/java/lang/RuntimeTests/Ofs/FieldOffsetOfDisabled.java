@@ -26,12 +26,12 @@
  * @summary Test for disabled Runtime.fieldOffsetOf
  * @library /test/lib
  *
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -Xint                   FieldOffsetOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:TieredStopAtLevel=1 FieldOffsetOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:TieredStopAtLevel=2 FieldOffsetOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:TieredStopAtLevel=3 FieldOffsetOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:TieredStopAtLevel=4 FieldOffsetOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:-TieredCompilation  FieldOffsetOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -Xint                   FieldOffsetOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=1 FieldOffsetOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=2 FieldOffsetOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=3 FieldOffsetOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=4 FieldOffsetOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:-TieredCompilation  FieldOffsetOfDisabled
  */
 
 import java.lang.reflect.Field;

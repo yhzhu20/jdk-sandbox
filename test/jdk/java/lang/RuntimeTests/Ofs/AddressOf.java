@@ -26,12 +26,12 @@
  * @summary Test for Runtime.addressOf
  * @library /test/lib
  *
- * @run main/othervm -Xmx128m -Xint AddressOf
- * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=1 AddressOf
- * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=2 AddressOf
- * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=3 AddressOf
- * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=4 AddressOf
- * @run main/othervm -Xmx128m -XX:-TieredCompilation  AddressOf
+ * @run main/othervm -Xmx128m                                                                 -Xint                   AddressOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=1 AddressOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=2 AddressOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=3 AddressOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=4 AddressOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:-TieredCompilation  AddressOf
  */
 
 import java.lang.reflect.Field;

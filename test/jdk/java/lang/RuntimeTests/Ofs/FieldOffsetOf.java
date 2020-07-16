@@ -26,12 +26,12 @@
  * @summary Test for Runtime.fieldOffsetOf
  * @library /test/lib
  *
- * @run main/othervm -Xmx128m -Xint                   FieldOffsetOf
- * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=1 FieldOffsetOf
- * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=2 FieldOffsetOf
- * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=3 FieldOffsetOf
- * @run main/othervm -Xmx128m -XX:TieredStopAtLevel=4 FieldOffsetOf
- * @run main/othervm -Xmx128m -XX:-TieredCompilation  FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xint                   FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=1 FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=2 FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=3 FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=4 FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:-TieredCompilation  FieldOffsetOf
  */
 
 import java.lang.reflect.Field;

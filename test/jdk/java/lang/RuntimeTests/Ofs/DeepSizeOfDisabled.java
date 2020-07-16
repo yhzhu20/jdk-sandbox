@@ -26,12 +26,12 @@
  * @summary Test for disabled Runtime.deepSizeOf
  * @library /test/lib
  *
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -Xint                   DeepSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:TieredStopAtLevel=1 DeepSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:TieredStopAtLevel=2 DeepSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:TieredStopAtLevel=3 DeepSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:TieredStopAtLevel=4 DeepSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:-TieredCompilation  DeepSizeOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:+AbortVMOnCompilationFailure -Xint                   DeepSizeOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=1 DeepSizeOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=2 DeepSizeOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=3 DeepSizeOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=4 DeepSizeOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:+AbortVMOnCompilationFailure -XX:-TieredCompilation  DeepSizeOfDisabled
  */
 
 import java.lang.reflect.Field;
