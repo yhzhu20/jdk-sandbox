@@ -26,12 +26,12 @@
  * @summary Test for disabled Runtime.sizeOf
  * @library /test/lib
  *
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeOfs -Xint                   SizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeOfs -XX:TieredStopAtLevel=1 SizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeOfs -XX:TieredStopAtLevel=2 SizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeOfs -XX:TieredStopAtLevel=3 SizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeOfs -XX:TieredStopAtLevel=4 SizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeOfs -XX:-TieredCompilation  SizeOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -Xint                   SizeOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:TieredStopAtLevel=1 SizeOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:TieredStopAtLevel=2 SizeOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:TieredStopAtLevel=3 SizeOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:TieredStopAtLevel=4 SizeOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:-TieredCompilation  SizeOfDisabled
  */
 
 import java.lang.reflect.Field;

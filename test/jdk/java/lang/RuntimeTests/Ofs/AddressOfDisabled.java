@@ -26,12 +26,12 @@
  * @summary Test for disabled Runtime.addressOf
  * @library /test/lib
  *
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeOfs -Xint                   AddressOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeOfs -XX:TieredStopAtLevel=1 AddressOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeOfs -XX:TieredStopAtLevel=2 AddressOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeOfs -XX:TieredStopAtLevel=3 AddressOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeOfs -XX:TieredStopAtLevel=4 AddressOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeOfs -XX:-TieredCompilation  AddressOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeAddressOf -Xint                   AddressOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeAddressOf -XX:TieredStopAtLevel=1 AddressOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeAddressOf -XX:TieredStopAtLevel=2 AddressOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeAddressOf -XX:TieredStopAtLevel=3 AddressOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeAddressOf -XX:TieredStopAtLevel=4 AddressOfDisabled
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeAddressOf -XX:-TieredCompilation  AddressOfDisabled
  */
 
 import java.lang.reflect.Field;

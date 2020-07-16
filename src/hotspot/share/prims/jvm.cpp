@@ -542,7 +542,7 @@ JVM_END
 JVM_ENTRY_NO_ENV(jlong, JVM_SizeOf(jobject obj))
   JVMWrapper("JVM_SizeOf");
   assert(obj != NULL, "object must not be NULL");
-  if (!RuntimeOfs) return -1;
+  if (!RuntimeSizeOf) return -1;
 
   oop o = JNIHandles::resolve_non_null(obj);
   return o->size()*HeapWordSize;
@@ -551,7 +551,7 @@ JVM_END
 JVM_ENTRY_NO_ENV(jlong, JVM_AddressOf(jobject obj))
   JVMWrapper("JVM_AddressOf");
   if (obj == NULL) return 0;
-  if (!RuntimeOfs) return -1;
+  if (!RuntimeAddressOf) return -1;
 
   oop o = JNIHandles::resolve_non_null(obj);
   return cast_from_oop<jlong>(o);
@@ -560,7 +560,7 @@ JVM_END
 JVM_ENTRY_NO_ENV(jlong, JVM_FieldOffsetOf(jobject field))
   JVMWrapper("JVM_FieldOffsetOf");
   assert(field != NULL, "field must not be NULL");
-  if (!RuntimeOfs) return -1;
+  if (!RuntimeFieldOf) return -1;
 
   oop f    = JNIHandles::resolve_non_null(field);
   oop m    = java_lang_reflect_Field::clazz(f);
@@ -573,7 +573,7 @@ JVM_END
 JVM_ENTRY_NO_ENV(jlong, JVM_FieldSizeOf(jobject field))
   JVMWrapper("JVM_FieldSizeOf");
   assert(field != NULL, "field must not be NULL");
-  if (!RuntimeOfs) return -1;
+  if (!RuntimeFieldOf) return -1;
 
   oop f    = JNIHandles::resolve_non_null(field);
   oop m    = java_lang_reflect_Field::clazz(f);
@@ -645,7 +645,7 @@ JVM_ENTRY(jobjectArray, JVM_GetReferencedObjects(JNIEnv *env, jobject obj))
   oop o = JNIHandles::resolve_non_null(obj);
 
   Klass* klass = o->klass();
-  if (!RuntimeOfs || !klass->is_instance_klass()) {
+  if (!RuntimeSizeOf || !klass->is_instance_klass()) {
     oop result = oopFactory::new_objArray(SystemDictionary::Object_klass(), 0, CHECK_NULL);
     return (jobjectArray)JNIHandles::make_local(env, result);
   }

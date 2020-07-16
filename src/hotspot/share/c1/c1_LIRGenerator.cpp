@@ -1325,7 +1325,7 @@ void LIRGenerator::do_addressOf(Intrinsic* x) {
   value.load_item();
   LIR_Opr reg = rlock_result(x);
 
-  if (RuntimeOfs) {
+  if (RuntimeAddressOf) {
 #ifdef _LP64
     __ move(value.result(), reg, NULL);
 #else

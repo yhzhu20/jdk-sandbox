@@ -2458,8 +2458,14 @@ const size_t minimumSymbolTableSize = 1024;
   diagnostic(bool, DeoptimizeNMethodBarriersALot, false,                    \
                 "Make nmethod barriers deoptimise a lot.")                  \
                                                                             \
-  diagnostic(bool, RuntimeOfs, true,                                        \
-                "Enable low-level Runtime.*of methods.")                    \
+  diagnostic(bool, RuntimeAddressOf, true,                                  \
+                "Enable low-level Runtime.addressOf methods.")              \
+                                                                            \
+  diagnostic(bool, RuntimeFieldOf, true,                                    \
+                "Enable low-level Runtime.field*Of methods.")               \
+                                                                            \
+  diagnostic(bool, RuntimeSizeOf, true,                                     \
+                "Enable low-level Runtime.*sizeOOf methods.")               \
 
 // Interface macros
 #define DECLARE_PRODUCT_FLAG(type, name, value, doc)      extern "C" type name;
