@@ -860,6 +860,8 @@ public class Runtime {
         totalSize += rootSize;
         q.add(obj);
 
+        Object[] refBuf = new Object[1];
+
         while (!q.isEmpty()) {
             Object o = q.pop();
             if (o.getClass().isArray()) {
@@ -880,7 +882,12 @@ public class Runtime {
                     }
                 }
             } else {
-                for (Object e : getReferences0(o)) {
+                int objs;
+                while((objs = getReferences0(o, refBuf)) == -1) {
+                    refBuf = new Object[refBuf.length * 2];
+                }
+                for (int c = 0; c < objs; c++) {
+                    Object e = refBuf[c];
                     if (e != null && visited.add(e)) {
                         long size = sizeOf(e);
                         if (size == -1) {
@@ -897,8 +904,8 @@ public class Runtime {
         return totalSize;
     }
 
-    // TODO: Cache the array somehow, to minimize allocations...
-    private static native Object[] getReferences0(Object obj);
+    // Returns -1 when results array is too small.
+    private static native int getReferences0(Object obj, Object[] results);
 
     /**
      * Returns the current memory address taken by a given object.

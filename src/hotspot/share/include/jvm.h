@@ -170,8 +170,8 @@ JVM_FieldOffsetOf(jobject field);
 JNIEXPORT jlong JNICALL
 JVM_FieldSizeOf(jobject field);
 
-JNIEXPORT jobjectArray JNICALL
-JVM_GetReferencedObjects(JNIEnv *env, jobject obj);
+JNIEXPORT jint JNICALL
+JVM_GetReferencedObjects(JNIEnv *env, jobject obj, jobjectArray ref_buf);
 
 JNIEXPORT void * JNICALL
 JVM_LoadLibrary(const char *name);

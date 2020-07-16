@@ -600,7 +600,7 @@ JVM_END
 
 class GetReferencedObjectsClosure : public BasicOopIterateClosure {
 private:
-  objArrayOop _result;
+  objArrayOop const _result;
   int _count;
 public:
   GetReferencedObjectsClosure(objArrayOop result) : _result(result), _count(0) {}
@@ -617,45 +617,44 @@ public:
   debug_only(virtual bool should_verify_oops() { return false; })
 };
 
-JVM_ENTRY(jobjectArray, JVM_GetReferencedObjects(JNIEnv *env, jobject obj))
+JVM_ENTRY(jint, JVM_GetReferencedObjects(JNIEnv *env, jobject obj, jobjectArray ref_buf))
   JVMWrapper("JVM_GetReferencedObjects");
   assert(obj != NULL, "object must not be NULL");
+  assert(ref_buf != NULL, "ref buf must not be NULL");
 
-  JvmtiVMObjectAllocEventCollector oam;
+  if (!RuntimeSizeOf) {
+    return 0;
+  }
 
   oop o = JNIHandles::resolve_non_null(obj);
-
   Klass* klass = o->klass();
-  if (!RuntimeSizeOf || !klass->is_instance_klass()) {
-    oop result = oopFactory::new_objArray(SystemDictionary::Object_klass(), 0, CHECK_NULL);
-    return (jobjectArray)JNIHandles::make_local(env, result);
+  if (!klass->is_instance_klass()) {
+    return 0;
   }
 
   InstanceKlass* k = InstanceKlass::cast(klass);
-
   int count = k->nonstatic_oop_field_count();
   if (count == 0) {
-    oop result = oopFactory::new_objArray(SystemDictionary::Object_klass(), 0, CHECK_NULL);
-    return (jobjectArray)JNIHandles::make_local(env, result);
+    return 0;
   }
 
-  objArrayOop r = oopFactory::new_objArray(SystemDictionary::Object_klass(), count, CHECK_NULL);
-
-  // Resolve again in case the object have moved during array allocation (which may break for GC)
-  o = JNIHandles::resolve_non_null(obj);
+  objArrayOop a = objArrayOop(JNIHandles::resolve_non_null(ref_buf));
+  if (count > a->length()) {
+    return -1;
+  }
 
 #ifdef _LP64
   if (UseCompressedOops) {
-    GetReferencedObjectsClosure get_cl(r);
-    k->oop_oop_iterate<narrowOop>(o, &get_cl);
+    GetReferencedObjectsClosure cl(a);
+    k->oop_oop_iterate<narrowOop>(o, &cl);
   } else
 #endif
   {
-    GetReferencedObjectsClosure get_cl(r);
-    k->oop_oop_iterate<oop>(o, &get_cl);
+    GetReferencedObjectsClosure cl(a);
+    k->oop_oop_iterate<oop>(o, &cl);
   }
 
-  return (jobjectArray)JNIHandles::make_local(env, r);
+  return count;
 JVM_END
 
 // java.lang.Throwable //////////////////////////////////////////////////////
