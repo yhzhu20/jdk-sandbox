@@ -850,7 +850,7 @@ public class Runtime {
             return -1;
         }
 
-        Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<Object, Boolean>());
+        Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<Object, Boolean>(256));
         Deque<Object> q = new ArrayDeque<>();
 
         long totalSize = 0;
