@@ -617,7 +617,7 @@ public:
   debug_only(virtual bool should_verify_oops() { return false; })
 };
 
-JVM_ENTRY(jint, JVM_GetReferencedObjects(JNIEnv *env, jobject obj, jobjectArray ref_buf))
+JVM_ENTRY_NO_ENV(jint, JVM_GetReferencedObjects(jobject obj, jobjectArray ref_buf))
   JVMWrapper("JVM_GetReferencedObjects");
   assert(obj != NULL, "object must not be NULL");
   assert(ref_buf != NULL, "ref buf must not be NULL");
