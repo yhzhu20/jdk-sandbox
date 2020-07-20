@@ -26,12 +26,12 @@
  * @summary Test for Runtime.fieldSizeOf
  * @library /test/lib
  *
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xint                   FieldOffsetOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=1 FieldOffsetOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=2 FieldOffsetOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=3 FieldOffsetOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=4 FieldOffsetOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:-TieredCompilation  FieldOffsetOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xint                   FieldSizeOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=1 FieldSizeOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=2 FieldSizeOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=3 FieldSizeOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=4 FieldSizeOf
+ * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -XX:-TieredCompilation  FieldSizeOf
  */
 
 import java.lang.reflect.Field;
@@ -43,27 +43,22 @@ public class FieldSizeOf {
         testNulls();
     }
 
-    private static testOffsets() throws Exception {
-        Field fBoolean = Target.class.getDeclaredField("f_boolean");
-        Field fByte    = Target.class.getDeclaredField("f_byte");
-        Field fChar    = Target.class.getDeclaredField("f_char");
-        Field fShort   = Target.class.getDeclaredField("f_short");
-        Field fInt     = Target.class.getDeclaredField("f_int");
-        Field fFloat   = Target.class.getDeclaredField("f_float");
-        Field fLong    = Target.class.getDeclaredField("f_long");
-        Field fDouble  = Target.class.getDeclaredField("f_double");
-        Field fObject  = Target.class.getDeclaredField("f_object");
+    private static void testOffsets() throws Exception {
+        testWith(1, Holder.class.getDeclaredField("f_boolean"));
+        testWith(1, Holder.class.getDeclaredField("f_byte"));
+        testWith(2, Holder.class.getDeclaredField("f_char"));
+        testWith(2, Holder.class.getDeclaredField("f_short"));
+        testWith(4, Holder.class.getDeclaredField("f_int"));
+        testWith(4, Holder.class.getDeclaredField("f_float"));
+        testWith(8, Holder.class.getDeclaredField("f_long"));
+        testWith(8, Holder.class.getDeclaredField("f_double"));
+        testWith(4, Holder.class.getDeclaredField("f_object")); // TODO: Assumes compressed oops
+        testWith(4, Holder.class.getDeclaredField("f_array"));  // TODO: Assumes compressed oops
+    }
 
-        for (int c = 0; c < 100000; c++) {
-           RuntimeOfUtil.assertEquals(1, Runtime.fieldSizeOf(fBoolean));
-           RuntimeOfUtil.assertEquals(1, Runtime.fieldSizeOf(fByte));
-           RuntimeOfUtil.assertEquals(2, Runtime.fieldSizeOf(fChar));
-           RuntimeOfUtil.assertEquals(2, Runtime.fieldSizeOf(fShort));
-           RuntimeOfUtil.assertEquals(4, Runtime.fieldSizeOf(fInt));
-           RuntimeOfUtil.assertEquals(4, Runtime.fieldSizeOf(fFloat));
-           RuntimeOfUtil.assertEquals(8, Runtime.fieldSizeOf(fLong));
-           RuntimeOfUtil.assertEquals(8, Runtime.fieldSizeOf(fDouble));
-           RuntimeOfUtil.assertEquals(4, Runtime.fieldSizeOf(fObject)); // TODO: Assumes compressed oops
+    private static void testWith(int expected, Field f) {
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertEquals(expected, Runtime.fieldSizeOf(f));
         }
     }
 
@@ -78,16 +73,17 @@ public class FieldSizeOf {
         }
     }
 
-    public static Target {
-        boolean f_boolean;
-        byte    f_byte;
-        char    f_char;
-        short   f_short;
-        int     f_int;
-        float   f_float;
-        double  f_double;
-        long    f_long;
-        Object  f_object;
+    public static class Holder {
+        boolean  f_boolean;
+        byte     f_byte;
+        char     f_char;
+        short    f_short;
+        int      f_int;
+        float    f_float;
+        double   f_double;
+        long     f_long;
+        Object   f_object;
+        Object[] f_array;
     }
 
 }
