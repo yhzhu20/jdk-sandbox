@@ -818,9 +818,14 @@ public class Runtime {
     }
 
     /**
-     * Returns the runtime estimate of storage taken by a given object.
+     * Returns the implementation-specific estimate of the amount of storage
+     * consumed by the specified object.
+     * <p>
+     * The estimate may change during a single invocation of the JVM. JVM may
+     * answer the "don't know" value if it does not know the size of the object.
+     * JVM may answer the "don't know" value if it refuses to provide the estimate.
      *
-     * @param obj object
+     * @param obj object to estimate the size of
      * @return storage size in bytes, or {@code -1} if storage size is unknown
      * @throws NullPointerException if {@code obj} is {@code null}
      * @since 16
@@ -834,9 +839,18 @@ public class Runtime {
     private static native long sizeOf0(Object obj);
 
     /**
-     * Returns the runtime estimate of storage taken by a given object and all objects referenced by it.
+     * Returns the implementation-specific estimate of the amount of storage
+     * consumed by the specified object and all objects referenced by it.
+     * <p>
+     * The estimate may change during a single invocation of the JVM. Notably,
+     * the estimate is not guaranteed to remain stable if the object references in
+     * the walked subgraph change when {@code deepSizeOf} is running.
+     * <p>
+     * JVM may answer the "don't know" value if it does not know the size of the
+     * specified object or any of objects referenced from it. JVM may answer
+     * "don't know" value if it refuses to provide the estimate.
      *
-     * @param obj starting object
+     * @param obj root object to start the estimate from
      * @return storage size in bytes, or {@code -1} if storage size is unknown
      * @throws NullPointerException if {@code obj} is {@code null}
      * @since 16
@@ -908,14 +922,20 @@ public class Runtime {
     private static native int getReferences0(Object obj, Object[] results);
 
     /**
-     * Returns the current memory address taken by a given object.
+     * Returns the implementation-specific representation of the memory address
+     * where the specified object resides.
      * <p>
-     * In the presence of moving garbage collector, the address can change
-     * at any time, including during the call. As such, this method is only
-     * useful for low-level debugging and heap introspection.
+     * The estimate may change during a single invocation of the JVM. Notably,
+     * in the presence of moving garbage collector, the address can change at any
+     * time, including during the call. As such, this method is only useful for
+     * low-level debugging and heap introspection in a quiescent application.
+     * <p>
+     * JVM may answer the "don't know" value if it does not know the address of
+     * the specified object, or refuses to provide this information.
      *
-     * @param obj object
-     * @return current object address, or "0" if {@code obj} is @{code null}, or {@code -1} if address is unknown
+     * @param obj object to get the address of
+     * @return current object address, or "0" if {@code obj} is @{code null},
+     *         or {@code -1} if address is unknown
      * @since 16
      */
     public static long addressOf(Object obj) {
@@ -926,7 +946,15 @@ public class Runtime {
     private static native long addressOf0(Object obj);
 
     /**
-     * Returns the offset of the field within the object.
+     * Returns the implementation-specific estimate of the offset from the
+     * beginning of the object for the specified object field.
+     * <p>
+     * The estimate may change during a single invocation of the JVM, for example
+     * during class redefinition.
+     * <p>
+     * JVM may answer the "don't know" value if it does not know the address of
+     * the specified object, or refuses to provide this information.
+     *
      * TODO: Split by staticness?
      *
      * @param field field to poll
@@ -943,7 +971,14 @@ public class Runtime {
     private static native long fieldOffsetOf0(Field field);
 
     /**
-     * Returns the size of the field within the object.
+     * Returns the implementation-specific estimate of the field slot size for
+     * the specified object field.
+     * <p>
+     * The estimate may change during a single invocation of the JVM.
+     * <p>
+     * JVM may answer the "don't know" value if it does not know the address of
+     * the specified object, or refuses to provide this information.
+     *
      * TODO: Split by staticness?
      *
      * @param field field to poll
