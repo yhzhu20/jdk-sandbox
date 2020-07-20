@@ -946,16 +946,19 @@ public class Runtime {
     private static native long addressOf0(Object obj);
 
     /**
-     * Returns the implementation-specific estimate of the offset from the
-     * beginning of the object for the specified object field.
+     * Returns the implementation-specific estimate of the offset of the field
+     * within the holding container.
+     * <p>
+     * For the instance fields, the offset is from the beginning of the holder
+     * object. For the static fields, the offset is from the beginning of the
+     * unspecified holder area. As such, these offsets are useful for comparing
+     * the offsets of two fields, not for any kind of absolute addressing.
      * <p>
      * The estimate may change during a single invocation of the JVM, for example
      * during class redefinition.
      * <p>
      * JVM may answer the "don't know" value if it does not know the address of
      * the specified object, or refuses to provide this information.
-     *
-     * TODO: Split by staticness?
      *
      * @param field field to poll
      * @return the field offset in bytes, or {@code -1} if field offset is unknown

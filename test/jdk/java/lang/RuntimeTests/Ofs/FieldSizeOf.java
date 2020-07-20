@@ -39,11 +39,12 @@ import java.lang.reflect.Field;
 public class FieldSizeOf {
 
     public static void main(String ... args) throws Exception {
-        testOffsets();
+        testInstanceOffsets();
+        testStaticOffsets();
         testNulls();
     }
 
-    private static void testOffsets() throws Exception {
+    private static void testInstanceOffsets() throws Exception {
         testWith(1, Holder.class.getDeclaredField("f_boolean"));
         testWith(1, Holder.class.getDeclaredField("f_byte"));
         testWith(2, Holder.class.getDeclaredField("f_char"));
@@ -54,6 +55,19 @@ public class FieldSizeOf {
         testWith(8, Holder.class.getDeclaredField("f_double"));
         testWith(4, Holder.class.getDeclaredField("f_object")); // TODO: Assumes compressed oops
         testWith(4, Holder.class.getDeclaredField("f_array"));  // TODO: Assumes compressed oops
+    }
+
+    private static void testStaticOffsets() throws Exception {
+        testWith(1, Holder.class.getDeclaredField("s_boolean"));
+        testWith(1, Holder.class.getDeclaredField("s_byte"));
+        testWith(2, Holder.class.getDeclaredField("s_char"));
+        testWith(2, Holder.class.getDeclaredField("s_short"));
+        testWith(4, Holder.class.getDeclaredField("s_int"));
+        testWith(4, Holder.class.getDeclaredField("s_float"));
+        testWith(8, Holder.class.getDeclaredField("s_long"));
+        testWith(8, Holder.class.getDeclaredField("s_double"));
+        testWith(4, Holder.class.getDeclaredField("s_object")); // TODO: Assumes compressed oops
+        testWith(4, Holder.class.getDeclaredField("s_array"));  // TODO: Assumes compressed oops
     }
 
     private static void testWith(int expected, Field f) {
@@ -74,6 +88,16 @@ public class FieldSizeOf {
     }
 
     public static class Holder {
+        static boolean  s_boolean;
+        static byte     s_byte;
+        static char     s_char;
+        static short    s_short;
+        static int      s_int;
+        static float    s_float;
+        static double   s_double;
+        static long     s_long;
+        static Object   s_object;
+        static Object[] s_array;
         boolean  f_boolean;
         byte     f_byte;
         char     f_char;

@@ -39,10 +39,27 @@ import java.lang.reflect.Field;
 public class FieldOffsetOfDisabled {
 
     public static void main(String ... args) throws Exception {
-        Field f = Integer.class.getDeclaredField("value");
+        testInstanceOffset();
+        testStaticOffset();
+    }
+
+    private static void testInstanceOffset() throws Exception {
+        Field f = Holder.class.getDeclaredField("x");
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(-1, Runtime.fieldOffsetOf(f));
         }
+    }
+
+    private static void testStaticOffset() throws Exception {
+        Field f = Holder.class.getDeclaredField("staticX");
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertEquals(-1, Runtime.fieldOffsetOf(f));
+        }
+    }
+
+    static class Holder {
+        static int staticX;
+        int x;
     }
 
 }

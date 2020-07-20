@@ -40,16 +40,25 @@ import jdk.test.lib.Platform;
 public class FieldOffsetOf {
 
     public static void main(String ... args) throws Exception {
-        testOffsets();
+        testInstanceOffsets();
+        testStaticOffsets();
         testNulls();
     }
 
-    private static void testOffsets() throws Exception {
+    private static void testInstanceOffsets() throws Exception {
         int expected = Platform.is64bit() ? 12 : 8;
 
-        Field f = Integer.class.getDeclaredField("value");
+        Field f = Holder.class.getDeclaredField("x");
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(expected, Runtime.fieldOffsetOf(f));
+        }
+    }
+
+    private static void testStaticOffsets() throws Exception {
+        Field f = Holder.class.getDeclaredField("staticX");
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertNotEquals(0,  Runtime.fieldOffsetOf(f));
+            RuntimeOfUtil.assertNotEquals(-1, Runtime.fieldOffsetOf(f));
         }
     }
 
@@ -62,6 +71,11 @@ public class FieldOffsetOf {
                 // expected
             }
         }
+    }
+
+    static class Holder {
+        static int staticX;
+        int x;
     }
 
 }
