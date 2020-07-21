@@ -72,31 +72,31 @@ Java_java_lang_Runtime_availableProcessors(JNIEnv *env, jobject this)
 }
 
 JNIEXPORT jlong JNICALL
-Java_java_lang_Runtime_sizeOf0(JNIEnv *env, jobject this, jobject obj)
+Java_java_lang_Runtime_sizeOf0(JNIEnv *env, jclass cls, jobject obj)
 {
   return JVM_SizeOf(obj);
 }
 
 JNIEXPORT jint JNICALL
-Java_java_lang_Runtime_getReferences0(JNIEnv *env, jobject this, jobject obj, jobjectArray ref_buf)
+Java_java_lang_Runtime_getReferences0(JNIEnv *env, jclass cls, jobject obj, jobjectArray ref_buf)
 {
   return JVM_GetReferencedObjects(obj, ref_buf);
 }
 
 JNIEXPORT jlong JNICALL
-Java_java_lang_Runtime_addressOf0(JNIEnv *env, jobject this, jobject field)
+Java_java_lang_Runtime_addressOf0(JNIEnv *env, jclass cls, jobject field)
 {
   return JVM_AddressOf(field);
 }
 
 JNIEXPORT jlong JNICALL
-Java_java_lang_Runtime_fieldOffsetOf0(JNIEnv *env, jobject this, jobject field)
+Java_java_lang_Runtime_fieldOffsetOf0(JNIEnv *env, jclass cls, jobject field)
 {
   return JVM_FieldOffsetOf(field);
 }
 
 JNIEXPORT jlong JNICALL
-Java_java_lang_Runtime_fieldSizeOf0(JNIEnv *env, jobject this, jobject field)
+Java_java_lang_Runtime_fieldSizeOf0(JNIEnv *env, jclass cls, jobject field)
 {
   return JVM_FieldSizeOf(field);
 }
