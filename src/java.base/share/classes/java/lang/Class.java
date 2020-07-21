@@ -4451,4 +4451,15 @@ public final class Class<T> implements java.io.Serializable,
     }
 
     private native String[] getPermittedSubclasses0();
+
+    private transient long instanceSize;
+
+    long instanceSize() {
+        return instanceSize;
+    }
+
+    void setInstanceSize(long instanceSize) {
+        this.instanceSize = instanceSize;
+    }
+
 }
