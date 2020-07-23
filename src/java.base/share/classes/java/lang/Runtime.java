@@ -832,19 +832,7 @@ public class Runtime {
      */
     public static long sizeOf(Object obj) {
         Objects.requireNonNull(obj);
-        Class<?> cl = obj.getClass();
-
-        if (cl.isArray()) {
-            return sizeOf0(obj);
-        }
-
-        long size = cl.instanceSize();
-        if (size == 0) {
-            size = sizeOf0(obj);
-            cl.setInstanceSize(size);
-        }
-
-        return size;
+        return sizeOf0(obj);
     }
 
     @HotSpotIntrinsicCandidate
