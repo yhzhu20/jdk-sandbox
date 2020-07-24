@@ -1321,21 +1321,23 @@ void LIRGenerator::do_currentThread(Intrinsic* x) {
 
 void LIRGenerator::do_addressOf(Intrinsic* x) {
   assert(x->number_of_arguments() == 1, "wrong type");
-  LIRItem value(x->argument_at(0), this);
-  value.load_item();
   LIR_Opr reg = rlock_result(x);
 
-  if (RuntimeAddressOf) {
-#ifdef _LP64
-    __ move(value.result(), reg, NULL);
-#else
-    LIR_Opr res = new_register(T_LONG);
-    __ convert(Bytecodes::_i2l, value.result(), res);
-    __ move(res, reg, NULL);
-#endif
-  } else {
+  if (!RuntimeAddressOf) {
     __ move(LIR_OprFact::longConst(-1), reg, NULL);
+    return;
   }
+
+  LIRItem value(x->argument_at(0), this);
+  value.load_item();
+
+#ifdef _LP64
+  __ move(value.result(), reg, NULL);
+#else
+  LIR_Opr res = new_register(T_LONG);
+  __ convert(Bytecodes::_i2l, value.result(), res);
+  __ move(res, reg, NULL);
+#endif
 }
 
 void LIRGenerator::do_sizeOf(Intrinsic* x) {
