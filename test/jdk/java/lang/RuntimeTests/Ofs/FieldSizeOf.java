@@ -23,20 +23,130 @@
 
 /*
  * @test
- * @summary Test for Runtime.fieldSizeOf
+ * @summary Test for Runtime.fieldSizeOf with 32-bit compressed oops
  * @library /test/lib
  *
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -Xint                   FieldSizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=1 FieldSizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=2 FieldSizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=3 FieldSizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=4 FieldSizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:-TieredCompilation  FieldSizeOf
+ * @build sun.hotspot.WhiteBox
+ * @run driver ClassFileInstaller sun.hotspot.WhiteBox
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -Xint
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=1
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=2
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=3
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=4
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:-TieredCompilation
+ *                   FieldSizeOf
+ */
+
+/*
+ * @test
+ * @summary Test for Runtime.fieldSizeOf with zero-based compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ *
+ * @build sun.hotspot.WhiteBox
+ * @run driver ClassFileInstaller sun.hotspot.WhiteBox
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -Xint
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=1
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=2
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=3
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=4
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:-TieredCompilation
+ *                   FieldSizeOf
+ */
+
+/*
+ * @test
+ * @summary Test for Runtime.fieldSizeOf without compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ *
+ * @build sun.hotspot.WhiteBox
+ * @run driver ClassFileInstaller sun.hotspot.WhiteBox
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -Xint
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=1
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=2
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=3
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=4
+ *                   FieldSizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:. 
+ *                   -XX:-TieredCompilation
+ *                   FieldSizeOf
  */
 
 import java.lang.reflect.Field;
+import sun.hotspot.WhiteBox;
 
 public class FieldSizeOf {
+
+    static final Boolean compressedOops = WhiteBox.getWhiteBox().getBooleanVMFlag("UseCompressedOops");
+    static final int R = ((compressedOops == null) || (compressedOops == true)) ?  4 : 8;
 
     public static void main(String ... args) throws Exception {
         testInstanceOffsets();
@@ -53,8 +163,8 @@ public class FieldSizeOf {
         testWith(4, Holder.class.getDeclaredField("f_float"));
         testWith(8, Holder.class.getDeclaredField("f_long"));
         testWith(8, Holder.class.getDeclaredField("f_double"));
-        testWith(4, Holder.class.getDeclaredField("f_object")); // TODO: Assumes compressed oops
-        testWith(4, Holder.class.getDeclaredField("f_array"));  // TODO: Assumes compressed oops
+        testWith(R, Holder.class.getDeclaredField("f_object"));
+        testWith(R, Holder.class.getDeclaredField("f_array"));
     }
 
     private static void testStaticOffsets() throws Exception {
@@ -66,8 +176,8 @@ public class FieldSizeOf {
         testWith(4, Holder.class.getDeclaredField("s_float"));
         testWith(8, Holder.class.getDeclaredField("s_long"));
         testWith(8, Holder.class.getDeclaredField("s_double"));
-        testWith(4, Holder.class.getDeclaredField("s_object")); // TODO: Assumes compressed oops
-        testWith(4, Holder.class.getDeclaredField("s_array"));  // TODO: Assumes compressed oops
+        testWith(R, Holder.class.getDeclaredField("s_object"));
+        testWith(R, Holder.class.getDeclaredField("s_array"));
     }
 
     private static void testWith(int expected, Field f) {

@@ -23,34 +23,270 @@
 
 /*
  * @test
- * @summary Test for Runtime.sizeOf
+ * @summary Test for Runtime.SizeOf with 32-bit compressed oops
  * @library /test/lib
  *
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -Xint                   SizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=1 SizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=2 SizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=3 SizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=4 SizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:-TieredCompilation  SizeOf
+ * @build sun.hotspot.WhiteBox
+ * @run driver ClassFileInstaller sun.hotspot.WhiteBox
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -Xint
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=1
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=2
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=3
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=4
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:-TieredCompilation
+ *                   SizeOf
  */
 
 /*
  * @test
- * @summary Test for Runtime.sizeOf, when allocations go to slowpath
+ * @summary Test for Runtime.SizeOf with zero-based compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ *
+ * @build sun.hotspot.WhiteBox
+ * @run driver ClassFileInstaller sun.hotspot.WhiteBox
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -Xint
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=1
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=2
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=3
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=4
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:-TieredCompilation
+ *                   SizeOf
+ */
+
+/*
+ * @test
+ * @summary Test for Runtime.SizeOf without compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ *
+ * @build sun.hotspot.WhiteBox
+ * @run driver ClassFileInstaller sun.hotspot.WhiteBox
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -Xint
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=1
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=2
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=3
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:TieredStopAtLevel=4
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:-TieredCompilation
+ *                   SizeOf
+ */
+
+/*
+ * @test
+ * @summary Test for Runtime.SizeOf with 32-bit compressed oops
  * @library /test/lib
  * @requires vm.debug
  *
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -Xint                   -XX:FastAllocateSizeLimit=0 SizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=1 -XX:FastAllocateSizeLimit=0 SizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=2 -XX:FastAllocateSizeLimit=0 SizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=3 -XX:FastAllocateSizeLimit=0 SizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=4 -XX:FastAllocateSizeLimit=0 SizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:-TieredCompilation  -XX:FastAllocateSizeLimit=0 SizeOf
+ * @build sun.hotspot.WhiteBox
+ * @run driver ClassFileInstaller sun.hotspot.WhiteBox
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -Xint
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:TieredStopAtLevel=1
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:TieredStopAtLevel=2
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:TieredStopAtLevel=3
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:TieredStopAtLevel=4
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:-TieredCompilation
+ *                   SizeOf
+ */
+
+/*
+ * @test
+ * @summary Test for Runtime.SizeOf with zero-based compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ * @requires vm.debug
+ *
+ * @build sun.hotspot.WhiteBox
+ * @run driver ClassFileInstaller sun.hotspot.WhiteBox
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -Xint
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:TieredStopAtLevel=1
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:TieredStopAtLevel=2
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:TieredStopAtLevel=3
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:TieredStopAtLevel=4
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:-TieredCompilation
+ *                   SizeOf
+ */
+
+/*
+ * @test
+ * @summary Test for Runtime.SizeOf without compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ * @requires vm.debug
+ *
+ * @build sun.hotspot.WhiteBox
+ * @run driver ClassFileInstaller sun.hotspot.WhiteBox
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -Xint
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:TieredStopAtLevel=1
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:TieredStopAtLevel=2
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:TieredStopAtLevel=3
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:TieredStopAtLevel=4
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:FastAllocateSizeLimit=0
+ *                   -XX:-TieredCompilation
+ *                   SizeOf
  */
 
 import jdk.test.lib.Platform;
+import sun.hotspot.WhiteBox;
 
 public class SizeOf {
+
+    static final Boolean compressedOops = WhiteBox.getWhiteBox().getBooleanVMFlag("UseCompressedOops");
+    static final int R = ((compressedOops == null) || (compressedOops == true)) ?  4 : 8;
 
     public static void main(String ... args) {
         testSize_newObject();
@@ -117,7 +353,7 @@ public class SizeOf {
     }
 
     private static void testSize_newSmallObjArray() {
-        int expected = 1024*4 + 16;
+        int expected = 1024*R + 16;
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(new Object[1024]));
         }
@@ -125,7 +361,7 @@ public class SizeOf {
 
     private static void testSize_localSmallObjArray() {
         Object[] arr = new Object[1024];
-        int expected = arr.length*4 + 16;
+        int expected = arr.length*R + 16;
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(arr));
         }
@@ -134,7 +370,7 @@ public class SizeOf {
     static Object[] smallObjArr = new Object[1024];
 
     private static void testSize_fieldSmallObjArray() {
-        int expected = smallArr.length*4 + 16;
+        int expected = smallArr.length*R + 16;
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(smallObjArr));
         }

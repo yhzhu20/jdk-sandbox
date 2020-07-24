@@ -20,18 +20,115 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
+ 
+/*
+ * @test
+ * @summary Test for Runtime.deepSizeOf with 32-bit compressed oops
+ * @library /test/lib
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -Xint
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:TieredStopAtLevel=1
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:TieredStopAtLevel=2
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:TieredStopAtLevel=3
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:TieredStopAtLevel=4
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-TieredCompilation
+ *                   DeepSizeOf
+ */
 
 /*
  * @test
- * @summary Test for Runtime.deepSizeOf
+ * @summary Test for Runtime.deepSizeOf with zero-based compressed oops
  * @library /test/lib
+ * @requires vm.bits == 64
  *
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -Xint                   DeepSizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=1 DeepSizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=2 DeepSizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=3 DeepSizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=4 DeepSizeOf
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:-TieredCompilation  DeepSizeOf
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -Xint
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:TieredStopAtLevel=1
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:TieredStopAtLevel=2
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:TieredStopAtLevel=3
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:TieredStopAtLevel=4
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-TieredCompilation
+ *                   DeepSizeOf
+ */
+
+/*
+ * @test
+ * @summary Test for Runtime.deepSizeOf without compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -Xint
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:TieredStopAtLevel=1
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:TieredStopAtLevel=2
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:TieredStopAtLevel=3
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:TieredStopAtLevel=4
+ *                   DeepSizeOf
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-TieredCompilation
+ *                   DeepSizeOf
  */
 
 import jdk.test.lib.Platform;

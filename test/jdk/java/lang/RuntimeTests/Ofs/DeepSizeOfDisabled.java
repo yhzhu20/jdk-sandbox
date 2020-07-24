@@ -23,15 +23,131 @@
 
 /*
  * @test
- * @summary Test for disabled Runtime.deepSizeOf
+ * @summary Test for disabled Runtime.deepSizeOf with 32-bit compressed oops
  * @library /test/lib
+ * @requires vm.bits == 64
  *
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:+AbortVMOnCompilationFailure -Xint                   DeepSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=1 DeepSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=2 DeepSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=3 DeepSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=4 DeepSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeSizeOf -XX:+AbortVMOnCompilationFailure -XX:-TieredCompilation  DeepSizeOfDisabled
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -Xint
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:TieredStopAtLevel=1
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:TieredStopAtLevel=2
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:TieredStopAtLevel=3
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:TieredStopAtLevel=4
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:-TieredCompilation
+ *                   DeepSizeOfDisabled
+ */
+
+/*
+ * @test
+ * @summary Test for disabled Runtime.deepSizeOf with zero-based compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -Xint
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:TieredStopAtLevel=1
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:TieredStopAtLevel=2
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:TieredStopAtLevel=3
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:TieredStopAtLevel=4
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:-TieredCompilation
+ *                   DeepSizeOfDisabled
+ */
+
+/*
+ * @test
+ * @summary Test for disabled Runtime.deepSizeOf without compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -Xint
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:TieredStopAtLevel=1
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:TieredStopAtLevel=2
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:TieredStopAtLevel=3
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:TieredStopAtLevel=4
+ *                   DeepSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeSizeOf
+ *                   -XX:-TieredCompilation
+ *                   DeepSizeOfDisabled
  */
 
 import java.lang.reflect.Field;

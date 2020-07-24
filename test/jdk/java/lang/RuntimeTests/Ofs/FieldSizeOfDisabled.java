@@ -23,15 +23,131 @@
 
 /*
  * @test
- * @summary Test for disabled Runtime.fieldSizeOf
+ * @summary Test for disabled Runtime.fieldSizeOf with 32-bit compressed oops
  * @library /test/lib
+ * @requires vm.bits == 64
  *
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -Xint                   FieldSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=1 FieldSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=2 FieldSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=3 FieldSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=4 FieldSizeOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:-TieredCompilation  FieldSizeOfDisabled
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -Xint
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=1
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=2
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=3
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=4
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:-TieredCompilation
+ *                   FieldSizeOfDisabled
+ */
+
+/*
+ * @test
+ * @summary Test for disabled Runtime.fieldSizeOf with zero-based compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -Xint
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=1
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=2
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=3
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=4
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:-TieredCompilation
+ *                   FieldSizeOfDisabled
+ */
+
+/*
+ * @test
+ * @summary Test for disabled Runtime.fieldSizeOf without compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -Xint
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=1
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=2
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=3
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=4
+ *                   FieldSizeOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:-TieredCompilation
+ *                   FieldSizeOfDisabled
  */
 
 import java.lang.reflect.Field;

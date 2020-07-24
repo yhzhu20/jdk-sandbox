@@ -23,15 +23,130 @@
 
 /*
  * @test
- * @summary Test for disabled Runtime.addressOf
+ * @summary Test for disabled Runtime.addressOf with 32-bit compressed oops
  * @library /test/lib
  *
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeAddressOf -XX:+AbortVMOnCompilationFailure -Xcheck:jni -Xint                   AddressOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeAddressOf -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=1 AddressOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeAddressOf -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=2 AddressOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeAddressOf -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=3 AddressOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeAddressOf -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:TieredStopAtLevel=4 AddressOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeAddressOf -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:-TieredCompilation  AddressOfDisabled
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -Xint
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:TieredStopAtLevel=1
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:TieredStopAtLevel=2
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:TieredStopAtLevel=3
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:TieredStopAtLevel=4
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:-TieredCompilation
+ *                   AddressOfDisabled
+ */
+
+/*
+ * @test
+ * @summary Test for disabled Runtime.addressOf with zero-based compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -Xint
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:TieredStopAtLevel=1
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:TieredStopAtLevel=2
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:TieredStopAtLevel=3
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:TieredStopAtLevel=4
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:-TieredCompilation
+ *                   AddressOfDisabled
+ */
+
+/*
+ * @test
+ * @summary Test for disabled Runtime.addressOf without compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -Xint
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:TieredStopAtLevel=1
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:TieredStopAtLevel=2
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:TieredStopAtLevel=3
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:TieredStopAtLevel=4
+ *                   AddressOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeAddressOf
+ *                   -XX:-TieredCompilation
+ *                   AddressOfDisabled
  */
 
 import java.lang.reflect.Field;

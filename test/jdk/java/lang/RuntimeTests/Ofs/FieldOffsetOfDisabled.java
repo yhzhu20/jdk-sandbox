@@ -23,15 +23,130 @@
 
 /*
  * @test
- * @summary Test for disabled Runtime.fieldOffsetOf
+ * @summary Test for disabled Runtime.fieldOffsetOf with 32-bit compressed oops
  * @library /test/lib
  *
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -Xint                   FieldOffsetOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=1 FieldOffsetOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=2 FieldOffsetOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=3 FieldOffsetOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:TieredStopAtLevel=4 FieldOffsetOfDisabled
- * @run main/othervm -Xmx128m -XX:+UnlockDiagnosticVMOptions -XX:-RuntimeFieldOf -XX:+AbortVMOnCompilationFailure -XX:-TieredCompilation  FieldOffsetOfDisabled
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -Xint
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=1
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=2
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=3
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=4
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:-TieredCompilation
+ *                   FieldOffsetOfDisabled
+ */
+
+/*
+ * @test
+ * @summary Test for disabled Runtime.fieldOffsetOf with zero-based compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -Xint
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=1
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=2
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=3
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=4
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:-TieredCompilation
+ *                   FieldOffsetOfDisabled
+ */
+
+/*
+ * @test
+ * @summary Test for disabled Runtime.fieldOffsetOf without compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -Xint
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=1
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=2
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=3
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:TieredStopAtLevel=4
+ *                   FieldOffsetOfDisabled
+ *
+ * @run main/othervm -Xmx128m -XX:-UseCompressedOops
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
+ *                   -XX:-RuntimeFieldOf
+ *                   -XX:-TieredCompilation
+ *                   FieldOffsetOfDisabled
  */
 
 import java.lang.reflect.Field;
