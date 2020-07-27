@@ -47,6 +47,7 @@ import jdk.internal.access.SharedSecrets;
 import jdk.internal.loader.NativeLibrary;
 import jdk.internal.reflect.CallerSensitive;
 import jdk.internal.reflect.Reflection;
+import jdk.internal.vm.annotation.DontInline;
 
 /**
  * Every Java application has a single instance of class
@@ -830,6 +831,7 @@ public class Runtime {
      * @throws NullPointerException if {@code obj} is {@code null}
      * @since 16
      */
+    @DontInline // Semantics: make sure the object is not scalar replaced.
     public static long sizeOf(Object obj) {
         Objects.requireNonNull(obj);
         return sizeOf0(obj);
@@ -938,6 +940,7 @@ public class Runtime {
      *         or {@code -1} if address is unknown
      * @since 16
      */
+    @DontInline // Semantics: make sure the object is not scalar replaced.
     public static long addressOf(Object obj) {
         return addressOf0(obj);
     }

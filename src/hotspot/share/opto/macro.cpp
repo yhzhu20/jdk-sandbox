@@ -707,15 +707,7 @@ bool PhaseMacroExpand::can_eliminate_allocation(AllocateNode *alloc, GrowableArr
         } else {
           safepoints.append_if_missing(sfpt);
         }
-      } else if (use->Opcode() == Op_CastP2X) {
-        // CastP2X is used by GC barriers and addressOf intrinsics.
-        // Try to see if this is an addressOf intrinsic, and if so, forbid
-        // elimination. Current prototype makes it in an YOLO way:
-        // putting an "expensive" flag over CastP2X node for addressOf.
-        if (use->is_expensive()) {
-          can_eliminate = false;
-        }
-      } else {
+      } else if (use->Opcode() != Op_CastP2X) { // CastP2X is used by card mark
         if (use->is_Phi()) {
           if (use->outcnt() == 1 && use->unique_out()->Opcode() == Op_Return) {
             NOT_PRODUCT(fail_eliminate = "Object is return value";)

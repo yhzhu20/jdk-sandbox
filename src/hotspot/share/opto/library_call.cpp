@@ -6903,6 +6903,7 @@ bool LibraryCallKit::inline_sizeOf() {
 
   if (layout_is_con) {
     // Layout helper is constant, can figure out things at compile time.
+    assert(false, "Since sizeOf is @DontInline, this path should be unvisited");
 
     if (Klass::layout_helper_is_instance(layout_con)) {
       // Instance case:  layout_con contains the size itself.
@@ -7011,14 +7012,7 @@ bool LibraryCallKit::inline_addressOf() {
   }
 
   Node* obj = argument(0);
-
-  // YOLO: Mark the CastP2XNode to disambiguate it against the CastP2X nodes
-  // from GC barriers that could be eliminated.
-  Node* cast = new CastP2XNode(control(), obj);
-  cast->add_flag(Node::Flag_is_expensive);
-  assert(cast->is_expensive(), "Sanity");
-
-  Node* raw_val = _gvn.transform(cast);
+  Node* raw_val = _gvn.transform(new CastP2XNode(NULL, obj));
   Node* long_val = ConvX2L(raw_val);
 
   set_result(long_val);
