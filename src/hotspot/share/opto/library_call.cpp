@@ -7005,9 +7005,20 @@ bool LibraryCallKit::inline_sizeOf() {
 }
 
 bool LibraryCallKit::inline_addressOf() {
+  if (!RuntimeAddressOf) {
+    set_result(longcon(-1));
+    return true;
+  }
+
   Node* obj = argument(0);
 
-  Node* raw_val = _gvn.transform(new CastP2XNode(NULL, obj));
+  // YOLO: Mark the CastP2XNode to disambiguate it against the CastP2X nodes
+  // from GC barriers that could be eliminated.
+  Node* cast = new CastP2XNode(control(), obj);
+  cast->add_flag(Node::Flag_is_expensive);
+  assert(cast->is_expensive(), "Sanity");
+
+  Node* raw_val = _gvn.transform(cast);
   Node* long_val = ConvX2L(raw_val);
 
   set_result(long_val);
