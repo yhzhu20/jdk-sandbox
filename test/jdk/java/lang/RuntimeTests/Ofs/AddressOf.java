@@ -136,10 +136,24 @@ import java.lang.reflect.Field;
 public class AddressOf {
 
     public static void main(String ... args) throws Exception {
+        testAddress_newInteger();
+        testAddress_IntegerValueOf();
         testAddress_newObject();
         testAddress_localObject();
         testAddress_fieldObject();
         testNulls();
+    }
+
+    private static void testAddress_newInteger() throws Exception {
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertNotEquals(0, Runtime.addressOf(new Integer(c)));
+        }
+    }
+
+    private static void testAddress_IntegerValueOf() throws Exception {
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            RuntimeOfUtil.assertNotEquals(0, Runtime.addressOf(Integer.valueOf(c)));
+        }
     }
 
     private static void testAddress_newObject() throws Exception {
