@@ -866,13 +866,13 @@ public class Runtime {
             return -1;
         }
 
-        IdentityHashMap<Object, Boolean> visited = new IdentityHashMap<Object, Boolean>(256);
+        IdentityHashSet visited = new IdentityHashSet(IdentityHashSet.MINIMUM_CAPACITY);
         ArrayDeque<Object> q = new ArrayDeque<>();
 
         long totalSize = 0;
 
         // Seed the scan with the root object
-        visited.put(obj, Boolean.TRUE);
+        visited.add(obj);
         totalSize += rootSize;
         q.add(obj);
 
@@ -889,7 +889,7 @@ public class Runtime {
                 }
 
                 for (Object e : (Object[])o) {
-                    if (e != null && (visited.put(e, Boolean.TRUE) == null)) {
+                    if (e != null && visited.add(e)) {
                         long size = sizeOf(e);
                         if (size == -1) {
                             // Result is imprecise.
@@ -907,7 +907,7 @@ public class Runtime {
                 }
                 for (int c = 0; c < objs; c++) {
                     Object e = refBuf[c];
-                    if (e != null && (visited.put(e, Boolean.TRUE) == null)) {
+                    if (e != null && visited.add(e)) {
                         long size = sizeOf(e);
                         if (size == -1) {
                             // Result is imprecise.
@@ -929,6 +929,89 @@ public class Runtime {
 
     // Returns the number of valid entries in results array, or -1 when results array is too small.
     private static native int getReferences0(Object obj, Object[] refBuf);
+
+    private static final class IdentityHashSet {
+        private static final int MINIMUM_CAPACITY = 4;
+        private static final int MAXIMUM_CAPACITY = 1 << 29;
+
+        private Object[] table;
+        private int size;
+
+        public IdentityHashSet(int expectedMaxSize) {
+            table = new Object[capacity(expectedMaxSize)];
+        }
+
+        private static int capacity(int expectedMaxSize) {
+            return
+                (expectedMaxSize > MAXIMUM_CAPACITY / 3) ? MAXIMUM_CAPACITY :
+                (expectedMaxSize <= 2 * MINIMUM_CAPACITY / 3) ? MINIMUM_CAPACITY :
+                Integer.highestOneBit(expectedMaxSize + (expectedMaxSize << 1));
+        }
+
+        private static int hash(Object x, int length) {
+            int h = System.identityHashCode(x);
+            // Multiply by -254 to use the hash LSB and to ensure index is even
+            return ((h << 1) - (h << 8)) & (length - 1);
+        }
+
+        private static int nextIndex(int i, int len) {
+            return (i + 1 < len ? i + 1 : 0);
+        }
+
+        public boolean add(Object o) {
+            retryAfterResize:
+            for (;;) {
+                final Object[] tab = table;
+                final int len = tab.length;
+                int i = hash(o, len);
+
+                for (Object item; (item = tab[i]) != null; i = nextIndex(i, len)) {
+                    if (item == o) {
+                        return false;
+                    }
+                }
+
+                final int s = size + 1;
+                // Use optimized form of 3 * s.
+                // Next capacity is len, 2 * current capacity.
+                if (s + (s << 1) > len && resize(len))
+                    continue retryAfterResize;
+
+                tab[i] = o;
+                size = s;
+                return true;
+            }
+        }
+
+        private boolean resize(int newCapacity) {
+            int newLength = newCapacity * 2;
+
+            Object[] oldTable = table;
+            int oldLength = oldTable.length;
+            if (oldLength == 2 * MAXIMUM_CAPACITY) { // can't expand any further
+                if (size == MAXIMUM_CAPACITY - 1)
+                    throw new IllegalStateException("Capacity exhausted.");
+                return false;
+            }
+            if (oldLength >= newLength)
+                return false;
+
+            Object[] newTable = new Object[newLength];
+
+            for (int j = 0; j < oldLength; j++) {
+                Object o = oldTable[j];
+                if (o != null) {
+                    oldTable[j] = null;
+                    int i = hash(o, newLength);
+                    while (newTable[i] != null)
+                        i = nextIndex(i, newLength);
+                    newTable[i] = o;
+                }
+            }
+            table = newTable;
+            return true;
+        }
+    }
 
     /**
      * Returns the implementation-specific representation of the memory address
