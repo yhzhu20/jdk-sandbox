@@ -866,13 +866,13 @@ public class Runtime {
             return -1;
         }
 
-        Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<Object, Boolean>(256));
-        Deque<Object> q = new ArrayDeque<>();
+        IdentityHashMap<Object, Boolean> visited = new IdentityHashMap<Object, Boolean>(256);
+        ArrayDeque<Object> q = new ArrayDeque<>();
 
         long totalSize = 0;
 
         // Seed the scan with the root object
-        visited.add(obj);
+        visited.put(obj, Boolean.TRUE);
         totalSize += rootSize;
         q.add(obj);
 
@@ -881,14 +881,15 @@ public class Runtime {
 
         while (!q.isEmpty()) {
             Object o = q.pop();
-            if (o.getClass().isArray()) {
-                if (o.getClass().getComponentType().isPrimitive()) {
+            Class<?> cl = o.getClass();
+            if (cl.isArray()) {
+                if (cl.getComponentType().isPrimitive()) {
                     // Nothing to do here
                     continue;
                 }
 
                 for (Object e : (Object[])o) {
-                    if (e != null && visited.add(e)) {
+                    if (e != null && (visited.put(e, Boolean.TRUE) == null)) {
                         long size = sizeOf(e);
                         if (size == -1) {
                             // Result is imprecise.
@@ -900,13 +901,13 @@ public class Runtime {
                 }
             } else {
                 int objs;
-                while((objs = getReferences0(o, refBuf)) == -1) {
+                while ((objs = getReferences0(o, refBuf)) == -1) {
                     refBuf = new Object[refBuf.length * 2];
                     refBufLast = 0;
                 }
                 for (int c = 0; c < objs; c++) {
                     Object e = refBuf[c];
-                    if (e != null && visited.add(e)) {
+                    if (e != null && (visited.put(e, Boolean.TRUE) == null)) {
                         long size = sizeOf(e);
                         if (size == -1) {
                             // Result is imprecise.
