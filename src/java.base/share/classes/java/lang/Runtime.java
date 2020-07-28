@@ -877,6 +877,7 @@ public class Runtime {
         q.add(obj);
 
         Object[] refBuf = new Object[1];
+        int refBufLast = 0;
 
         while (!q.isEmpty()) {
             Object o = q.pop();
@@ -901,6 +902,7 @@ public class Runtime {
                 int objs;
                 while((objs = getReferences0(o, refBuf)) == -1) {
                     refBuf = new Object[refBuf.length * 2];
+                    refBufLast = 0;
                 }
                 for (int c = 0; c < objs; c++) {
                     Object e = refBuf[c];
@@ -914,14 +916,18 @@ public class Runtime {
                         q.push(e);
                     }
                 }
+                for (int c = objs; c < refBufLast; c++) {
+                    refBuf[c] = null;
+                }
+                refBufLast = objs;
             }
         }
 
         return totalSize;
     }
 
-    // Returns -1 when results array is too small.
-    private static native int getReferences0(Object obj, Object[] results);
+    // Returns the number of valid entries in results array, or -1 when results array is too small.
+    private static native int getReferences0(Object obj, Object[] refBuf);
 
     /**
      * Returns the implementation-specific representation of the memory address
