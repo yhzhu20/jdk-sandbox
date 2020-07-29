@@ -158,6 +158,9 @@ JVM_MaxMemory(void);
 JNIEXPORT jint JNICALL
 JVM_ActiveProcessorCount(void);
 
+JNIEXPORT jboolean JNICALL
+JVM_IsUseContainerSupport(void);
+
 JNIEXPORT jlong JNICALL
 JVM_AddressOf(jobject obj);
 

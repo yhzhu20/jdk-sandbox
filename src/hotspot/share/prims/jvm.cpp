@@ -539,6 +539,16 @@ JVM_ENTRY_NO_ENV(jint, JVM_ActiveProcessorCount(void))
   return os::active_processor_count();
 JVM_END
 
+JVM_ENTRY_NO_ENV(jboolean, JVM_IsUseContainerSupport(void))
+  JVMWrapper("JVM_IsUseContainerSupport");
+#ifdef LINUX
+  if (UseContainerSupport) {
+    return JNI_TRUE;
+  }
+#endif
+  return JNI_FALSE;
+JVM_END
+
 JVM_ENTRY_NO_ENV(jlong, JVM_SizeOf(jobject obj))
   JVMWrapper("JVM_SizeOf");
   assert(obj != NULL, "object must not be NULL");
