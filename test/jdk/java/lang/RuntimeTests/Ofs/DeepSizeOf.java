@@ -137,6 +137,7 @@ public class DeepSizeOf {
 
     public static void main(String ... args) {
         testSame_newObject();
+        testSimpleHierarchy();
 
         testNodeChain(0);
         testNodeChain(1);
@@ -197,6 +198,23 @@ public class DeepSizeOf {
 
         for (int c = 0; c < RuntimeOfUtil.SHORT_ITERS; c++) {
             RuntimeOfUtil.assertEquals(Runtime.sizeOf(arr) + Runtime.sizeOf(o)*size, Runtime.deepSizeOf(arr));
+        }
+    }
+
+    private static class A {
+        Object o1;
+    }
+
+    private static class B extends A {
+        Object o2;
+    }
+
+    private static void testSimpleHierarchy() {
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            B b = new B();
+            b.o1 = new Object();
+            b.o2 = new Object();
+            RuntimeOfUtil.assertEquals(Runtime.sizeOf(b) + Runtime.sizeOf(b.o1) + Runtime.sizeOf(b.o2), Runtime.deepSizeOf(b));
         }
     }
 

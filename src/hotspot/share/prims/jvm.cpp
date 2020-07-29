@@ -617,6 +617,7 @@ public:
 
   template <typename T> void do_oop_nv(T* p) {
     oop o = HeapAccess<>::oop_load(p);
+    assert(_count < _result->length(), "Size estimate is sane");
     _result->obj_at_put(_count++, o);
   }
 
@@ -643,7 +644,14 @@ JVM_ENTRY_NO_ENV(jint, JVM_GetReferencedObjects(jobject obj, jobjectArray ref_bu
   }
 
   InstanceKlass* k = InstanceKlass::cast(klass);
-  int count = k->nonstatic_oop_field_count();
+  InstanceKlass* ik = k;
+
+  int count = 0;
+  while (ik != NULL) {
+    count += ik->nonstatic_oop_field_count();
+    ik = ik->superklass();
+  }
+
   if (count == 0) {
     return 0;
   }
