@@ -29,6 +29,7 @@ package java.lang;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
+import java.util.function.ToLongFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -858,6 +859,39 @@ public class Runtime {
      * @since 16
      */
     public static long deepSizeOf(Object obj) {
+        return deepSizeOf(obj, (o) -> -1L);
+    }
+
+    /**
+     * Returns the implementation-specific estimate of the amount of storage
+     * consumed by the specified object and all objects referenced by it.
+     * <p>
+     * The estimate may change during a single invocation of the JVM. Notably,
+     * the estimate is not guaranteed to remain stable if the object references in
+     * the walked subgraph change when {@code deepSizeOf} is running.
+     * <p>
+     * JVM may answer the "don't know" value if it does not know the size of the
+     * specified object or any of objects referenced from it. JVM may answer
+     * "don't know" value if it refuses to provide the estimate.
+     *
+     * @param obj root object to start the estimate from
+     * @param includeCheck predicate/callback to evaluate whether and how
+     *        the given object should be included in the size calculation:
+     *        <ul>
+     *        <li>{@code -1}: consider the object's shallow size and all
+     *                        its references.</li>
+     *        <li>{@code -2}: only consider the object's shallow size but
+     *                        do not "go deep".</li>
+     *        <li>{@code -3}: don't include object at all</li>
+     *        <li>any other value will consider the object's shallow size
+     *            plus the returned value.
+     *        </ul>
+     * @return storage size in bytes, or {@code -1} if storage size is unknown
+     * @throws NullPointerException if {@code obj} is {@code null}
+     * @since 16
+     */
+    public static long deepSizeOf(Object obj,
+                                  ToLongFunction<Object> includeCheck) {
         Objects.requireNonNull(obj);
 
         long rootSize = sizeOf(obj);
@@ -872,9 +906,19 @@ public class Runtime {
         long totalSize = 0;
 
         // Seed the scan with the root object
-        visited.add(obj);
-        totalSize += rootSize;
-        q.add(obj);
+        long t = includeCheck.applyAsLong(obj);
+        if (t == -3) {
+        }
+        else {
+            visited.add(obj);
+            totalSize += rootSize;
+            if (t == -1)
+                q.add(obj);
+            else if (t >= 0)
+                totalSize += t;
+            else if (t != -2)
+                throw new IllegalStateException("includeCheck returned illegal value " + t);
+        }
 
         Object[] refBuf = new Object[1];
         int refBufLast = 0;
@@ -890,13 +934,23 @@ public class Runtime {
 
                 for (Object e : (Object[])o) {
                     if (e != null && visited.add(e)) {
-                        long size = sizeOf(e);
-                        if (size == -1) {
-                            // Result is imprecise.
-                            return -1;
+                        t = includeCheck.applyAsLong(e);
+                        if (t == -3) {
                         }
-                        totalSize += size;
-                        q.push(e);
+                        else {
+                            long size = sizeOf(e);
+                            if (size == -1) {
+                                // Result is imprecise.
+                                return -1;
+                            }
+                            totalSize += size;
+                            if (t == -1)
+                                q.push(e);
+                            else if (t >= 0)
+                                totalSize += t;
+                            else if (t != -2)
+                                throw new IllegalStateException("includeCheck returned illegal value " + t);
+                        }
                     }
                 }
             } else {
@@ -908,14 +962,23 @@ public class Runtime {
                 for (int c = 0; c < objs; c++) {
                     Object e = refBuf[c];
                     if (visited.add(e)) {
+                    t = includeCheck.applyAsLong(e);
+                    if (t == -3) {
+                    } else {
                         long size = sizeOf(e);
                         if (size == -1) {
                             // Result is imprecise.
                             return -1;
                         }
                         totalSize += size;
-                        q.push(e);
-                    }
+                        if (t == -1)
+                            q.push(e);
+                        else if (t >= 0)
+                            totalSize += t;
+                        else if (t != -2)
+                            throw new IllegalStateException("includeCheck returned illegal value " + t);
+                        }
+                     }
                 }
                 for (int c = objs; c < refBufLast; c++) {
                     refBuf[c] = null;
