@@ -907,7 +907,7 @@ public class Runtime {
                 }
                 for (int c = 0; c < objs; c++) {
                     Object e = refBuf[c];
-                    if (e != null && visited.add(e)) {
+                    if (visited.add(e)) {
                         long size = sizeOf(e);
                         if (size == -1) {
                             // Result is imprecise.

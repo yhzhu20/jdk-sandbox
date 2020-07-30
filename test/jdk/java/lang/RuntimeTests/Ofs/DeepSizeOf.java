@@ -138,6 +138,7 @@ public class DeepSizeOf {
     public static void main(String ... args) {
         testSame_newObject();
         testSimpleHierarchy();
+        testPartialNulls();
 
         testNodeChain(0);
         testNodeChain(1);
@@ -215,6 +216,20 @@ public class DeepSizeOf {
             b.o1 = new Object();
             b.o2 = new Object();
             RuntimeOfUtil.assertEquals(Runtime.sizeOf(b) + Runtime.sizeOf(b.o1) + Runtime.sizeOf(b.o2), Runtime.deepSizeOf(b));
+        }
+    }
+
+    private static class D {
+        Object o1;
+        Object o2;
+    }
+
+    private static void testPartialNulls() {
+        for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
+            D d = new D();
+            d.o1 = null;
+            d.o2 = new Object();
+            RuntimeOfUtil.assertEquals(Runtime.sizeOf(d) + Runtime.sizeOf(d.o2), Runtime.deepSizeOf(d));
         }
     }
 

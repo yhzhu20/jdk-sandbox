@@ -617,9 +617,13 @@ public:
 
   template <typename T> void do_oop_nv(T* p) {
     oop o = HeapAccess<>::oop_load(p);
-    assert(_count < _result->length(), "Size estimate is sane");
-    _result->obj_at_put(_count++, o);
+    if (!CompressedOops::is_null(o)) {
+      assert(_count < _result->length(), "Size estimate is sane");
+      _result->obj_at_put(_count++, o);
+    }
   }
+
+  int count() { return _count; }
 
   virtual void do_oop(oop* p)       { do_oop_nv(p); }
   virtual void do_oop(narrowOop* p) { do_oop_nv(p); }
@@ -661,18 +665,18 @@ JVM_ENTRY_NO_ENV(jint, JVM_GetReferencedObjects(jobject obj, jobjectArray ref_bu
     return -1;
   }
 
+  GetReferencedObjectsClosure cl(a);
+
 #ifdef _LP64
   if (UseCompressedOops) {
-    GetReferencedObjectsClosure cl(a);
     k->oop_oop_iterate<narrowOop>(o, &cl);
   } else
 #endif
   {
-    GetReferencedObjectsClosure cl(a);
     k->oop_oop_iterate<oop>(o, &cl);
   }
 
-  return count;
+  return cl.count();
 JVM_END
 
 // java.lang.Throwable //////////////////////////////////////////////////////
