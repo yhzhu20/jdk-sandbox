@@ -862,6 +862,26 @@ public class Runtime {
         return deepSizeOf(obj, (o) -> -1L);
     }
 
+    private static long handleIncludeCheck(ArrayDeque<Object> q, Object o, ToLongFunction<Object> ic, long ts, long os) {
+        long t = ic.applyAsLong(o);
+        if (t == -1L) {
+            // Shallow size + all dependencies.
+            q.push(o);
+            return ts + os;
+        } else if (t == -2L) {
+            // Only shallow size.
+            return ts + os;
+        } else if (t == -3L) {
+            // Nothing.
+            return ts;
+        } else if (t >= 0) {
+            // Shallow size + addition.
+            return ts + os + t;
+        } else {
+            throw new IllegalStateException("includeCheck returned illegal value " + t);
+        }
+    }
+
     /**
      * Returns the implementation-specific estimate of the amount of storage
      * consumed by the specified object and all objects referenced by it.
@@ -906,19 +926,8 @@ public class Runtime {
         long totalSize = 0;
 
         // Seed the scan with the root object
-        long t = includeCheck.applyAsLong(obj);
-        if (t == -3) {
-        }
-        else {
-            visited.add(obj);
-            totalSize += rootSize;
-            if (t == -1)
-                q.add(obj);
-            else if (t >= 0)
-                totalSize += t;
-            else if (t != -2)
-                throw new IllegalStateException("includeCheck returned illegal value " + t);
-        }
+        visited.add(obj);
+        totalSize = handleIncludeCheck(q, obj, includeCheck, totalSize, rootSize);
 
         Object[] refBuf = new Object[1];
         int refBufLast = 0;
@@ -934,23 +943,12 @@ public class Runtime {
 
                 for (Object e : (Object[])o) {
                     if (e != null && visited.add(e)) {
-                        t = includeCheck.applyAsLong(e);
-                        if (t == -3) {
+                        long size = sizeOf(e);
+                        if (size == -1) {
+                            // Result is imprecise.
+                            return -1;
                         }
-                        else {
-                            long size = sizeOf(e);
-                            if (size == -1) {
-                                // Result is imprecise.
-                                return -1;
-                            }
-                            totalSize += size;
-                            if (t == -1)
-                                q.push(e);
-                            else if (t >= 0)
-                                totalSize += t;
-                            else if (t != -2)
-                                throw new IllegalStateException("includeCheck returned illegal value " + t);
-                        }
+                        totalSize = handleIncludeCheck(q, e, includeCheck, totalSize, size);
                     }
                 }
             } else {
@@ -962,23 +960,13 @@ public class Runtime {
                 for (int c = 0; c < objs; c++) {
                     Object e = refBuf[c];
                     if (visited.add(e)) {
-                    t = includeCheck.applyAsLong(e);
-                    if (t == -3) {
-                    } else {
                         long size = sizeOf(e);
                         if (size == -1) {
                             // Result is imprecise.
                             return -1;
                         }
-                        totalSize += size;
-                        if (t == -1)
-                            q.push(e);
-                        else if (t >= 0)
-                            totalSize += t;
-                        else if (t != -2)
-                            throw new IllegalStateException("includeCheck returned illegal value " + t);
-                        }
-                     }
+                        totalSize = handleIncludeCheck(q, e, includeCheck, totalSize, size);
+                    }
                 }
                 for (int c = objs; c < refBufLast; c++) {
                     refBuf[c] = null;
