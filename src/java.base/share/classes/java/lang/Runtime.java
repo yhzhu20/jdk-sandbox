@@ -998,9 +998,7 @@ public class Runtime {
         }
 
         private static int hash(Object x, int length) {
-            int h = System.identityHashCode(x);
-            // Multiply by -254 to use the hash LSB and to ensure index is even
-            return ((h << 1) - (h << 8)) & (length - 1);
+            return System.identityHashCode(x) & (length - 1);
         }
 
         private static int nextIndex(int i, int len) {
