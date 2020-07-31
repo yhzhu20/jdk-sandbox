@@ -3223,15 +3223,14 @@ void SharedRuntime::on_slowpath_allocation_exit(JavaThread* thread) {
 
 class GetReferencedObjectsClosure : public BasicOopIterateClosure {
 private:
-  objArrayOop const _result;
+  objArrayOopDesc* const _result;
   int _count;
 public:
-  GetReferencedObjectsClosure(objArrayOop result) : _result(result), _count(0) {}
+  GetReferencedObjectsClosure(objArrayOopDesc* result) : _result(result), _count(0) {}
 
   template <typename T> void do_oop_nv(T* p) {
     oop o = HeapAccess<>::oop_load(p);
     if (!CompressedOops::is_null(o)) {
-      assert(_count < _result->length(), "Size estimate is sane");
       _result->obj_at_put(_count++, o);
     }
   }
@@ -3245,20 +3244,11 @@ public:
   debug_only(virtual bool should_verify_oops() { return false; })
 };
 
-JRT_LEAF(jint, SharedRuntime::get_referenced_objects(oopDesc * obj, objArrayOopDesc * ref_buf))
+JRT_LEAF(jint, SharedRuntime::get_referenced_objects(oopDesc* obj, objArrayOopDesc* ref_buf))
   assert(Universe::heap()->is_in(obj), "object should be in heap: " PTR_FORMAT, p2i(obj));
   assert(Universe::heap()->is_in(ref_buf), "ref buf should be in heap: " PTR_FORMAT, p2i(ref_buf));
 
-  if (!RuntimeSizeOf) {
-    return 0;
-  }
-
-  Klass* klass = obj->klass();
-  if (!klass->is_instance_klass()) {
-    return 0;
-  }
-
-  InstanceKlass* k = InstanceKlass::cast(klass);
+  InstanceKlass* k = InstanceKlass::cast(obj->klass());
 
   int count = 0;
   {
