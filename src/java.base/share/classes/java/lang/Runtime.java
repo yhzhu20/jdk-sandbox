@@ -953,7 +953,7 @@ public class Runtime {
                 }
             } else {
                 int objs;
-                while ((objs = getReferences0(o, refBuf)) == -1) {
+                while ((objs = getReferencedObjects(o, refBuf)) == -1) {
                     refBuf = new Object[refBuf.length * 2];
                     refBufLast = 0;
                 }
@@ -980,7 +980,7 @@ public class Runtime {
 
     // Returns the number of valid entries in results array, or -1 when results array is too small.
     @HotSpotIntrinsicCandidate
-    private static native int getReferences0(Object obj, Object[] refBuf);
+    private static native int getReferencedObjects(Object obj, Object[] refBuf);
 
     private static final class IdentityHashSet {
         private static final int MINIMUM_CAPACITY = 4;

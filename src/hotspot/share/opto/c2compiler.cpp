@@ -646,7 +646,7 @@ bool C2Compiler::is_intrinsic_supported(const methodHandle& method, bool is_virt
   case vmIntrinsics::_Preconditions_checkIndex:
   case vmIntrinsics::_sizeOf:
   case vmIntrinsics::_addressOf:
-  case vmIntrinsics::_getReferences0:
+  case vmIntrinsics::_getReferencedObjects:
     break;
   default:
     return false;

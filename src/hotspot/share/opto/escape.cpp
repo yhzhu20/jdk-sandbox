@@ -1007,7 +1007,7 @@ void ConnectionGraph::process_call_arguments(CallNode *call) {
                   strcmp(call->as_CallLeaf()->_name, "bigIntegerRightShiftWorker") == 0 ||
                   strcmp(call->as_CallLeaf()->_name, "bigIntegerLeftShiftWorker") == 0 ||
                   strcmp(call->as_CallLeaf()->_name, "vectorizedMismatch") == 0 ||
-                  strcmp(call->as_CallLeaf()->_name, "get_references") == 0)
+                  strcmp(call->as_CallLeaf()->_name, "get_referenced_objects") == 0)
                  ))) {
             call->dump();
             fatal("EA unexpected CallLeaf %s", call->as_CallLeaf()->_name);

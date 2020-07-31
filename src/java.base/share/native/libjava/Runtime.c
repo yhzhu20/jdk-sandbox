@@ -78,7 +78,7 @@ Java_java_lang_Runtime_sizeOf0(JNIEnv *env, jclass cls, jobject obj)
 }
 
 JNIEXPORT jint JNICALL
-Java_java_lang_Runtime_getReferences0(JNIEnv *env, jclass cls, jobject obj, jobjectArray ref_buf)
+Java_java_lang_Runtime_getReferencedObjects(JNIEnv *env, jclass cls, jobject obj, jobjectArray ref_buf)
 {
   return JVM_GetReferencedObjects(obj, ref_buf);
 }

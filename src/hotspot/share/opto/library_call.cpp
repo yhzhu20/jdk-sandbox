@@ -336,7 +336,7 @@ class LibraryCallKit : public GraphKit {
 
   bool inline_addressOf();
   bool inline_sizeOf();
-  bool inline_getReferences();
+  bool inline_getReferencedObjects();
 
   bool inline_profileBoolean();
   bool inline_isCompileConstant();
@@ -916,8 +916,8 @@ bool LibraryCallKit::try_to_inline(int predicate) {
   case vmIntrinsics::_addressOf:
     return inline_addressOf();
 
-  case vmIntrinsics::_getReferences0:
-    return inline_getReferences();
+  case vmIntrinsics::_getReferencedObjects:
+    return inline_getReferencedObjects();
 
   default:
     // If you get here, it may be that someone has added a new intrinsic
@@ -7023,14 +7023,14 @@ bool LibraryCallKit::inline_addressOf() {
   return true;
 }
 
-bool LibraryCallKit::inline_getReferences() {
+bool LibraryCallKit::inline_getReferencedObjects() {
   Node* a1 = argument(0);
   Node* a2 = argument(1);
 
   Node* call = make_runtime_call(RC_LEAF|RC_NO_FP,
-                                 OptoRuntime::get_references_Type(),
-                                 CAST_FROM_FN_PTR(address, SharedRuntime::get_references),
-                                 "get_references",
+                                 OptoRuntime::get_referenced_objects_Type(),
+                                 CAST_FROM_FN_PTR(address, SharedRuntime::get_referenced_objects),
+                                 "get_referenced_objects",
                                  TypePtr::BOTTOM,
                                  a1, a2);
 

@@ -228,7 +228,7 @@ bool Compiler::is_intrinsic_supported(const methodHandle& method) {
 #endif
 #endif
     break;
-  case vmIntrinsics::_getReferences0:
+  case vmIntrinsics::_getReferencedObjects:
   case vmIntrinsics::_addressOf:
     break;
   case vmIntrinsics::_sizeOf:

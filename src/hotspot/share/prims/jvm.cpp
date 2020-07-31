@@ -612,7 +612,7 @@ JVM_ENTRY_NO_ENV(jint, JVM_GetReferencedObjects(jobject obj, jobjectArray ref_bu
   JVMWrapper("JVM_GetReferencedObjects");
   oop obj_oop = JNIHandles::resolve_non_null(obj);
   objArrayOop ref_buf_oop = objArrayOop(JNIHandles::resolve_non_null(ref_buf));
-  return SharedRuntime::get_references(obj_oop, ref_buf_oop);
+  return SharedRuntime::get_referenced_objects(obj_oop, ref_buf_oop);
 JVM_END
 
 // java.lang.Throwable //////////////////////////////////////////////////////

@@ -913,9 +913,9 @@
    do_name(     addressOf_name,                                   "addressOf0")                                         \
    do_alias(    addressOf_signature,                              object_long_signature)                                \
                                                                                                                         \
-  do_intrinsic(_getReferences0,           java_lang_Runtime,      getReferences0_name, getReferences0_signature, F_SN)  \
-   do_name(     getReferences0_name,                              "getReferences0")                                     \
-   do_alias(    getReferences0_signature,                         object_object_array_int_signature)                    \
+  do_intrinsic(_getReferencedObjects,     java_lang_Runtime,      getReferencedObjects_name, getReferencedObjects_signature, F_SN)  \
+   do_name(     getReferencedObjects_name,                        "getReferencedObjects")                               \
+   do_alias(    getReferencedObjects_signature,                   object_object_array_int_signature)                    \
                                                                                                                         \
   do_intrinsic(_copyOf,                   java_util_Arrays,       copyOf_name, copyOf_signature,                 F_S)   \
    do_name(     copyOf_name,                                     "copyOf")                                              \

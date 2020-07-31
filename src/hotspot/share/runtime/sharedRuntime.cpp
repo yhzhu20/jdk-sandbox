@@ -3245,7 +3245,7 @@ public:
   debug_only(virtual bool should_verify_oops() { return false; })
 };
 
-JRT_LEAF(jint, SharedRuntime::get_references(oopDesc* obj, objArrayOopDesc* ref_buf))
+JRT_LEAF(jint, SharedRuntime::get_referenced_objects(oopDesc * obj, objArrayOopDesc * ref_buf))
   assert(Universe::heap()->is_in(obj), "object should be in heap: " PTR_FORMAT, p2i(obj));
   assert(Universe::heap()->is_in(ref_buf), "ref buf should be in heap: " PTR_FORMAT, p2i(ref_buf));
 
