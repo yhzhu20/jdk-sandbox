@@ -1319,6 +1319,24 @@ void LIRGenerator::do_currentThread(Intrinsic* x) {
   __ move_wide(new LIR_Address(getThreadPointer(), in_bytes(JavaThread::threadObj_offset()), T_OBJECT), reg);
 }
 
+void LIRGenerator::do_getReferences(Intrinsic* x) {
+  BasicTypeList signature;
+  signature.append(T_OBJECT); // obj
+  signature.append(T_ARRAY);  // reference buffer
+
+  LIRItem a0(x->argument_at(0), this);
+  LIRItem a1(x->argument_at(1), this);
+  a0.load_item();
+  a1.load_item();
+
+  LIR_OprList* args = new LIR_OprList();
+  args->append(a0.result());
+  args->append(a1.result());
+
+  LIR_Opr result = call_runtime(&signature, args, CAST_FROM_FN_PTR(address, SharedRuntime::get_references), intType, NULL);
+  __ move(result, rlock_result(x), NULL);
+}
+
 void LIRGenerator::do_addressOf(Intrinsic* x) {
   assert(x->number_of_arguments() == 1, "wrong type");
   LIR_Opr reg = rlock_result(x);
@@ -3079,6 +3097,7 @@ void LIRGenerator::do_Intrinsic(Intrinsic* x) {
   case vmIntrinsics::_isPrimitive:    do_isPrimitive(x);   break;
   case vmIntrinsics::_getClass:       do_getClass(x);      break;
   case vmIntrinsics::_currentThread:  do_currentThread(x); break;
+  case vmIntrinsics::_getReferences0: do_getReferences(x); break;
   case vmIntrinsics::_addressOf:      do_addressOf(x);     break;
   case vmIntrinsics::_sizeOf:         do_sizeOf(x);        break;
 

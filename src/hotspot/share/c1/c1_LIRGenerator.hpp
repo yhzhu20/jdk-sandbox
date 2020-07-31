@@ -253,6 +253,7 @@ class LIRGenerator: public InstructionVisitor, public BlockClosure {
   void do_isPrimitive(Intrinsic* x);
   void do_getClass(Intrinsic* x);
   void do_currentThread(Intrinsic* x);
+  void do_getReferences(Intrinsic* x);
   void do_addressOf(Intrinsic* x);
   void do_sizeOf(Intrinsic* x);
   void do_FmaIntrinsic(Intrinsic* x);
