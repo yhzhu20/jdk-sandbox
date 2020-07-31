@@ -915,9 +915,8 @@ public class Runtime {
         Objects.requireNonNull(obj);
 
         long rootSize = sizeOf(obj);
-        if (rootSize == -1) {
-            // Result is imprecise.
-            return -1;
+        if (rootSize < 0) {
+            return rootSize;
         }
 
         IdentityHashSet visited = new IdentityHashSet(IdentityHashSet.MINIMUM_CAPACITY);
@@ -944,16 +943,15 @@ public class Runtime {
                 for (Object e : (Object[])o) {
                     if (e != null && visited.add(e)) {
                         long size = sizeOf(e);
-                        if (size == -1) {
-                            // Result is imprecise.
-                            return -1;
+                        if (size < 0) {
+                            return size;
                         }
                         totalSize = handleIncludeCheck(q, e, includeCheck, totalSize, size);
                     }
                 }
             } else {
                 int objs;
-                while ((objs = getReferencedObjects(o, refBuf)) == -1) {
+                while ((objs = getReferencedObjects(o, refBuf)) < 0) {
                     refBuf = new Object[refBuf.length * 2];
                     refBufLast = 0;
                 }
@@ -961,9 +959,8 @@ public class Runtime {
                     Object e = refBuf[c];
                     if (visited.add(e)) {
                         long size = sizeOf(e);
-                        if (size == -1) {
-                            // Result is imprecise.
-                            return -1;
+                        if (size < 0) {
+                            return size;
                         }
                         totalSize = handleIncludeCheck(q, e, includeCheck, totalSize, size);
                     }
