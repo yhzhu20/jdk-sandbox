@@ -910,11 +910,12 @@ public class Runtime {
      * @throws NullPointerException if {@code obj} is {@code null}
      * @since 16
      */
+    @DontInline // Semantics: make sure the object is not scalar replaced.
     public static long deepSizeOf(Object obj,
                                   ToLongFunction<Object> includeCheck) {
         Objects.requireNonNull(obj);
 
-        long rootSize = sizeOf(obj);
+        long rootSize = sizeOf0(obj);
         if (rootSize < 0) {
             return rootSize;
         }
@@ -942,7 +943,7 @@ public class Runtime {
 
                 for (Object e : (Object[])o) {
                     if (e != null && visited.add(e)) {
-                        long size = sizeOf(e);
+                        long size = sizeOf0(e);
                         if (size < 0) {
                             return size;
                         }
@@ -958,7 +959,7 @@ public class Runtime {
                 for (int c = 0; c < objs; c++) {
                     Object e = refBuf[c];
                     if (visited.add(e)) {
-                        long size = sizeOf(e);
+                        long size = sizeOf0(e);
                         if (size < 0) {
                             return size;
                         }
