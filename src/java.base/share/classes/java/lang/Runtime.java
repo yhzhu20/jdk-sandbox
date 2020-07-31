@@ -975,7 +975,16 @@ public class Runtime {
         return totalSize;
     }
 
-    // Returns the number of valid entries in results array, or -1 when results array is too small.
+    /**
+     * Peels the referenced objects from the given object and puts them
+     * into the reference buffer. Never returns nulls in reference buffer.
+     * Returns the number of valid elements in the buffer. If reference bufffer
+     * is too small, returns -1.
+     *
+     * @param obj object to peel
+     * @param refBuf reference buffer
+     * @return number of valid elements in buffer, -1 if buffer is too small
+     */
     @HotSpotIntrinsicCandidate
     private static native int getReferencedObjects(Object obj, Object[] refBuf);
 
