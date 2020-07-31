@@ -44,7 +44,6 @@
 #include "logging/log.hpp"
 #include "memory/dynamicArchive.hpp"
 #include "memory/heapShared.hpp"
-#include "memory/iterator.inline.hpp"
 #include "memory/oopFactory.hpp"
 #include "memory/referenceType.hpp"
 #include "memory/resourceArea.hpp"
@@ -52,7 +51,7 @@
 #include "oops/access.inline.hpp"
 #include "oops/constantPool.hpp"
 #include "oops/fieldStreams.inline.hpp"
-#include "oops/instanceKlass.inline.hpp"
+#include "oops/instanceKlass.hpp"
 #include "oops/method.hpp"
 #include "oops/recordComponent.hpp"
 #include "oops/objArrayKlass.hpp"
@@ -77,6 +76,7 @@
 #include "runtime/os.inline.hpp"
 #include "runtime/perfData.hpp"
 #include "runtime/reflection.hpp"
+#include "runtime/sharedRuntime.hpp"
 #include "runtime/synchronizer.hpp"
 #include "runtime/thread.inline.hpp"
 #include "runtime/threadSMR.hpp"
@@ -608,75 +608,11 @@ JVM_ENTRY_NO_ENV(jlong, JVM_FieldSizeOf(jobject field))
   return 0;
 JVM_END
 
-class GetReferencedObjectsClosure : public BasicOopIterateClosure {
-private:
-  objArrayOop const _result;
-  int _count;
-public:
-  GetReferencedObjectsClosure(objArrayOop result) : _result(result), _count(0) {}
-
-  template <typename T> void do_oop_nv(T* p) {
-    oop o = HeapAccess<>::oop_load(p);
-    if (!CompressedOops::is_null(o)) {
-      assert(_count < _result->length(), "Size estimate is sane");
-      _result->obj_at_put(_count++, o);
-    }
-  }
-
-  int count() { return _count; }
-
-  virtual void do_oop(oop* p)       { do_oop_nv(p); }
-  virtual void do_oop(narrowOop* p) { do_oop_nv(p); }
-
-  // Don't use the oop verification code in the oop_oop_iterate framework.
-  debug_only(virtual bool should_verify_oops() { return false; })
-};
-
 JVM_ENTRY_NO_ENV(jint, JVM_GetReferencedObjects(jobject obj, jobjectArray ref_buf))
   JVMWrapper("JVM_GetReferencedObjects");
-  assert(obj != NULL, "object must not be NULL");
-  assert(ref_buf != NULL, "ref buf must not be NULL");
-
-  if (!RuntimeSizeOf) {
-    return 0;
-  }
-
-  oop o = JNIHandles::resolve_non_null(obj);
-  Klass* klass = o->klass();
-  if (!klass->is_instance_klass()) {
-    return 0;
-  }
-
-  InstanceKlass* k = InstanceKlass::cast(klass);
-  InstanceKlass* ik = k;
-
-  int count = 0;
-  while (ik != NULL) {
-    count += ik->nonstatic_oop_field_count();
-    ik = ik->superklass();
-  }
-
-  if (count == 0) {
-    return 0;
-  }
-
-  objArrayOop a = objArrayOop(JNIHandles::resolve_non_null(ref_buf));
-  if (count > a->length()) {
-    return -1;
-  }
-
-  GetReferencedObjectsClosure cl(a);
-
-#ifdef _LP64
-  if (UseCompressedOops) {
-    k->oop_oop_iterate<narrowOop>(o, &cl);
-  } else
-#endif
-  {
-    k->oop_oop_iterate<oop>(o, &cl);
-  }
-
-  return cl.count();
+  oop obj_oop = JNIHandles::resolve_non_null(obj);
+  objArrayOop ref_buf_oop = objArrayOop(JNIHandles::resolve_non_null(ref_buf));
+  return SharedRuntime::get_references(obj_oop, ref_buf_oop);
 JVM_END
 
 // java.lang.Throwable //////////////////////////////////////////////////////

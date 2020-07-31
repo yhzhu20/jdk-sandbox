@@ -43,9 +43,11 @@
 #include "interpreter/interpreterRuntime.hpp"
 #include "jfr/jfrEvents.hpp"
 #include "logging/log.hpp"
+#include "memory/iterator.inline.hpp"
 #include "memory/metaspaceShared.hpp"
 #include "memory/resourceArea.hpp"
 #include "memory/universe.hpp"
+#include "oops/instanceKlass.inline.hpp"
 #include "oops/klass.hpp"
 #include "oops/method.inline.hpp"
 #include "oops/objArrayKlass.hpp"
@@ -63,6 +65,7 @@
 #include "runtime/interfaceSupport.inline.hpp"
 #include "runtime/java.hpp"
 #include "runtime/javaCalls.hpp"
+#include "runtime/jniHandles.inline.hpp"
 #include "runtime/sharedRuntime.hpp"
 #include "runtime/stubRoutines.hpp"
 #include "runtime/synchronizer.hpp"
@@ -3217,3 +3220,73 @@ void SharedRuntime::on_slowpath_allocation_exit(JavaThread* thread) {
   BarrierSet *bs = BarrierSet::barrier_set();
   bs->on_slowpath_allocation_exit(thread, new_obj);
 }
+
+class GetReferencedObjectsClosure : public BasicOopIterateClosure {
+private:
+  objArrayOop const _result;
+  int _count;
+public:
+  GetReferencedObjectsClosure(objArrayOop result) : _result(result), _count(0) {}
+
+  template <typename T> void do_oop_nv(T* p) {
+    oop o = HeapAccess<>::oop_load(p);
+    if (!CompressedOops::is_null(o)) {
+      assert(_count < _result->length(), "Size estimate is sane");
+      _result->obj_at_put(_count++, o);
+    }
+  }
+
+  int count() { return _count; }
+
+  virtual void do_oop(oop* p)       { do_oop_nv(p); }
+  virtual void do_oop(narrowOop* p) { do_oop_nv(p); }
+
+  // Don't use the oop verification code in the oop_oop_iterate framework.
+  debug_only(virtual bool should_verify_oops() { return false; })
+};
+
+JRT_LEAF(jint, SharedRuntime::get_references(oopDesc* obj, objArrayOopDesc* ref_buf))
+  assert(Universe::heap()->is_in(obj), "object should be in heap: " PTR_FORMAT, p2i(obj));
+  assert(Universe::heap()->is_in(ref_buf), "ref buf should be in heap: " PTR_FORMAT, p2i(ref_buf));
+
+  if (!RuntimeSizeOf) {
+    return 0;
+  }
+
+  Klass* klass = obj->klass();
+  if (!klass->is_instance_klass()) {
+    return 0;
+  }
+
+  InstanceKlass* k = InstanceKlass::cast(klass);
+
+  int count = 0;
+  {
+    InstanceKlass* ik = k;
+    while (ik != NULL) {
+      count += ik->nonstatic_oop_field_count();
+      ik = ik->superklass();
+    }
+  }
+
+  if (count == 0) {
+    return 0;
+  }
+
+  if (count > ref_buf->length()) {
+    return -1;
+  }
+
+  GetReferencedObjectsClosure cl(ref_buf);
+
+#ifdef _LP64
+  if (UseCompressedOops) {
+    k->oop_oop_iterate<narrowOop>(obj, &cl);
+  } else
+#endif
+  {
+    k->oop_oop_iterate<oop>(obj, &cl);
+  }
+
+  return cl.count();
+JRT_END

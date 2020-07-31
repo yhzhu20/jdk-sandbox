@@ -205,6 +205,8 @@ class SharedRuntime: AllStatic {
                                                      address faulting_pc,
                                                      ImplicitExceptionKind exception_kind);
 
+  static jint    get_references(oopDesc* obj, objArrayOopDesc* ref_buf);
+
   // Post-slow-path-allocation, pre-initializing-stores step for
   // implementing e.g. ReduceInitialCardMarks
   static void on_slowpath_allocation_exit(JavaThread* thread);

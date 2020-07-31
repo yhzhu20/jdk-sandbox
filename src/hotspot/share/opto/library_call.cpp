@@ -336,6 +336,7 @@ class LibraryCallKit : public GraphKit {
 
   bool inline_addressOf();
   bool inline_sizeOf();
+  bool inline_getReferences();
 
   bool inline_profileBoolean();
   bool inline_isCompileConstant();
@@ -914,6 +915,9 @@ bool LibraryCallKit::try_to_inline(int predicate) {
 
   case vmIntrinsics::_addressOf:
     return inline_addressOf();
+
+  case vmIntrinsics::_getReferences0:
+    return inline_getReferences();
 
   default:
     // If you get here, it may be that someone has added a new intrinsic
@@ -7016,5 +7020,21 @@ bool LibraryCallKit::inline_addressOf() {
   Node* long_val = ConvX2L(raw_val);
 
   set_result(long_val);
+  return true;
+}
+
+bool LibraryCallKit::inline_getReferences() {
+  Node* a1 = argument(0);
+  Node* a2 = argument(1);
+
+  Node* call = make_runtime_call(RC_LEAF|RC_NO_FP,
+                                 OptoRuntime::get_references_Type(),
+                                 CAST_FROM_FN_PTR(address, SharedRuntime::get_references),
+                                 "get_references",
+                                 TypePtr::BOTTOM,
+                                 a1, a2);
+
+  Node* value = _gvn.transform(new ProjNode(call, TypeFunc::Parms+0));
+  set_result(value);
   return true;
 }

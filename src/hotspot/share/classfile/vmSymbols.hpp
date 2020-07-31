@@ -507,6 +507,7 @@
   template(object_long_signature,                     "(Ljava/lang/Object;)J")                    \
   template(object_boolean_signature,                  "(Ljava/lang/Object;)Z")                    \
   template(object_object_signature,                   "(Ljava/lang/Object;)Ljava/lang/Object;")   \
+  template(object_object_array_int_signature,         "(Ljava/lang/Object;[Ljava/lang/Object;)I") \
   template(string_void_signature,                     "(Ljava/lang/String;)V")                    \
   template(string_int_signature,                      "(Ljava/lang/String;)I")                    \
   template(throwable_void_signature,                  "(Ljava/lang/Throwable;)V")                 \
@@ -911,6 +912,10 @@
   do_intrinsic(_addressOf,                java_lang_Runtime,      addressOf_name, addressOf_signature,           F_SN)  \
    do_name(     addressOf_name,                                   "addressOf0")                                         \
    do_alias(    addressOf_signature,                              object_long_signature)                                \
+                                                                                                                        \
+  do_intrinsic(_getReferences0,           java_lang_Runtime,      getReferences0_name, getReferences0_signature, F_SN)  \
+   do_name(     getReferences0_name,                              "getReferences0")                                     \
+   do_alias(    getReferences0_signature,                         object_object_array_int_signature)                    \
                                                                                                                         \
   do_intrinsic(_copyOf,                   java_util_Arrays,       copyOf_name, copyOf_signature,                 F_S)   \
    do_name(     copyOf_name,                                     "copyOf")                                              \

@@ -979,6 +979,7 @@ public class Runtime {
     }
 
     // Returns the number of valid entries in results array, or -1 when results array is too small.
+    @HotSpotIntrinsicCandidate
     private static native int getReferences0(Object obj, Object[] refBuf);
 
     private static final class IdentityHashSet {
