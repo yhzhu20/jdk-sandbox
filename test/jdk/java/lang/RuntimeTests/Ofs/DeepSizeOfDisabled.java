@@ -164,6 +164,7 @@ public class DeepSizeOfDisabled {
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(-1, Runtime.deepSizeOf(o));
             RuntimeOfUtil.assertEquals(-1, Runtime.deepSizeOf(arr));
+            RuntimeOfUtil.assertEquals(-1, Runtime.deepSizeOf(arr, obj -> -1));
         }
     }
 

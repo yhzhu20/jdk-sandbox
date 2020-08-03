@@ -153,6 +153,9 @@ public class DeepSizeOf {
         testObjArray(100);
 
         testNulls();
+
+        testIncludeCheck();
+        testIncludeCheckDeep();
     }
 
     private static void testSame_newObject() {
@@ -242,6 +245,58 @@ public class DeepSizeOf {
                 // expected
             }
         }
+    }
+
+    private static void testIncludeCheck() {
+        for (int i = 0; i < RuntimeOfUtil.ITERS; i++) {
+            Object o = new Object();
+            RuntimeOfUtil.assertEquals(Runtime.sizeOf(o) + 42L, Runtime.deepSizeOf(o, obj -> 42L));
+        }
+    }
+
+    private static void testIncludeCheckDeep() {
+        for (int i = 0; i < RuntimeOfUtil.ITERS; i++) {
+            DeepA a = new DeepA();
+            DeepB b = new DeepB();
+            DeepC c = new DeepC();
+            a.b = b;
+            b.c = c;
+            c.x = new Object();
+
+            long sA = Runtime.sizeOf(a);
+            long sB = Runtime.sizeOf(b);
+            long sC = Runtime.sizeOf(c);
+            long sCX = Runtime.sizeOf(c.x);
+
+            // -1: consider the object's shallow size and all its references.
+            // -2: only consider the object's shallow size but do not "go deep"
+            // -3: don't include object at all
+            // any other value will consider the object's shallow size plus the returned value.
+
+            RuntimeOfUtil.assertEquals(sA + sB + sC + sCX,
+                                       Runtime.deepSizeOf(a, obj -> -1)
+                                       );
+
+            RuntimeOfUtil.assertEquals(sA + sB,
+                                       Runtime.deepSizeOf(a, obj -> (obj instanceof DeepB) ? -2 : -1)
+                                       );
+
+            RuntimeOfUtil.assertEquals(sA,
+                                       Runtime.deepSizeOf(a, obj -> (obj instanceof DeepB) ? -3 : -1)
+                                       );
+        }
+    }
+
+    private static class DeepA {
+        DeepB b;
+    }
+
+    private static class DeepB {
+        DeepC c;
+    }
+
+    private static class DeepC {
+        Object x;
     }
 
 }
