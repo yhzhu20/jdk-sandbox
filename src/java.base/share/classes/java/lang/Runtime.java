@@ -45,6 +45,7 @@ import jdk.internal.loader.NativeLibrary;
 import jdk.internal.reflect.CallerSensitive;
 import jdk.internal.reflect.Reflection;
 import jdk.internal.vm.annotation.DontInline;
+import sun.security.util.SecurityConstants;
 
 /**
  * Every Java application has a single instance of class
@@ -910,6 +911,14 @@ public class Runtime {
     public static long deepSizeOf(Object obj,
                                   ToLongFunction<Object> includeCheck) {
         Objects.requireNonNull(obj);
+
+        // We are potentially leaking the objects to includeCheck callback.
+        // These objects are peeled from the private fields as well, which
+        // circumvents the normal Java access rules. Check we have the privilege.
+        SecurityManager sm = System.getSecurityManager();
+        if (sm != null) {
+            sm.checkPermission(SecurityConstants.ACCESS_PERMISSION);
+        }
 
         long rootSize = sizeOf0(obj);
         if (rootSize < 0) {
