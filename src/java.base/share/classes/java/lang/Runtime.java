@@ -33,6 +33,7 @@ import java.util.function.ToLongFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.Arrays;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Objects;
@@ -928,21 +929,19 @@ public class Runtime {
         IdentityHashSet visited = new IdentityHashSet(IdentityHashSet.MINIMUM_CAPACITY);
         ArrayDeque<Object> q = new ArrayDeque<>();
 
-        long totalSize = 0;
-
-        // Seed the scan with the root object
         visited.add(obj);
-        totalSize = handleIncludeCheck(q, obj, includeCheck, totalSize, rootSize);
+        long totalSize = handleIncludeCheck(q, obj, includeCheck, 0, rootSize);
 
         Object[] refBuf = new Object[1];
-        int refBufLast = 0;
 
         while (!q.isEmpty()) {
             Object o = q.pop();
             Class<?> cl = o.getClass();
             if (cl.isArray()) {
+                // Separate array path avoids adding a lot of (potentially large) array
+                // contents on the queue. No need to handle primitive arrays too.
+
                 if (cl.getComponentType().isPrimitive()) {
-                    // Nothing to do here
                     continue;
                 }
 
@@ -959,8 +958,8 @@ public class Runtime {
                 int objs;
                 while ((objs = getReferencedObjects(o, refBuf)) < 0) {
                     refBuf = new Object[refBuf.length * 2];
-                    refBufLast = 0;
                 }
+
                 for (int c = 0; c < objs; c++) {
                     Object e = refBuf[c];
                     if (visited.add(e)) {
@@ -971,10 +970,11 @@ public class Runtime {
                         totalSize = handleIncludeCheck(q, e, includeCheck, totalSize, size);
                     }
                 }
-                for (int c = objs; c < refBufLast; c++) {
-                    refBuf[c] = null;
-                }
-                refBufLast = objs;
+
+                // Null out the buffer: do not keep these objects referenced until next
+                // buffer fill, and help the VM code to avoid full SATB barriers on existing
+                // buffer elements in getReferencedObjects.
+                Arrays.fill(refBuf, 0, objs, null);
             }
         }
 
