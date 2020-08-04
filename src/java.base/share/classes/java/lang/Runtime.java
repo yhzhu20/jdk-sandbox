@@ -1012,20 +1012,15 @@ public class Runtime {
                 Integer.highestOneBit(expectedMaxSize + (expectedMaxSize << 1));
         }
 
-        private static int hash(Object x, int length) {
-            return System.identityHashCode(x) & (length - 1);
-        }
-
         private static int nextIndex(int i, int len) {
             return (i + 1 < len ? i + 1 : 0);
         }
 
         public boolean add(Object o) {
-            retryAfterResize:
-            for (;;) {
+            while (true) {
                 final Object[] tab = table;
                 final int len = tab.length;
-                int i = hash(o, len);
+                int i = System.identityHashCode(o) & (len - 1);
 
                 for (Object item; (item = tab[i]) != null; i = nextIndex(i, len)) {
                     if (item == o) {
@@ -1034,10 +1029,7 @@ public class Runtime {
                 }
 
                 final int s = size + 1;
-                // Use optimized form of 3 * s.
-                // Next capacity is len, 2 * current capacity.
-                if (s + (s << 1) > len && resize(len))
-                    continue retryAfterResize;
+                if (s*3 > len && resize()) continue;
 
                 tab[i] = o;
                 size = s;
@@ -1045,28 +1037,25 @@ public class Runtime {
             }
         }
 
-        private boolean resize(int newCapacity) {
-            int newLength = newCapacity * 2;
-
+        private boolean resize() {
             Object[] oldTable = table;
             int oldLength = oldTable.length;
-            if (oldLength == 2 * MAXIMUM_CAPACITY) { // can't expand any further
-                if (size == MAXIMUM_CAPACITY - 1)
-                    throw new IllegalStateException("Capacity exhausted.");
+            if (oldLength == MAXIMUM_CAPACITY) {
+                throw new IllegalStateException("Capacity exhausted.");
+            }
+
+            int newLength = oldLength * 2;
+            if (newLength <= oldLength) {
                 return false;
             }
-            if (oldLength >= newLength)
-                return false;
 
             Object[] newTable = new Object[newLength];
-
-            for (int j = 0; j < oldLength; j++) {
-                Object o = oldTable[j];
+            for (Object o : oldTable) {
                 if (o != null) {
-                    oldTable[j] = null;
-                    int i = hash(o, newLength);
-                    while (newTable[i] != null)
+                    int i = System.identityHashCode(o) & (newLength - 1);
+                    while (newTable[i] != null) {
                         i = nextIndex(i, newLength);
+                    }
                     newTable[i] = o;
                 }
             }
