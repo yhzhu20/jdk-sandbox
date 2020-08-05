@@ -150,8 +150,6 @@
  *                   DeepSizeOfDisabled
  */
 
-import java.lang.reflect.Field;
-
 public class DeepSizeOfDisabled {
 
     public static void main(String ... args) throws Exception {
@@ -164,7 +162,7 @@ public class DeepSizeOfDisabled {
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(-1, Runtime.deepSizeOf(o));
             RuntimeOfUtil.assertEquals(-1, Runtime.deepSizeOf(arr));
-            RuntimeOfUtil.assertEquals(-1, Runtime.deepSizeOf(arr, obj -> -1));
+            RuntimeOfUtil.assertEquals(-1, Runtime.deepSizeOf(arr, (obj) -> Runtime.DEEP_SIZE_OF_SHALLOW));
         }
     }
 

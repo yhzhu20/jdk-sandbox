@@ -131,8 +131,6 @@
  *                   DeepSizeOf
  */
 
-import jdk.test.lib.Platform;
-
 public class DeepSizeOf {
 
     public static void main(String ... args) {
@@ -250,7 +248,7 @@ public class DeepSizeOf {
     private static void testIncludeCheck() {
         for (int i = 0; i < RuntimeOfUtil.ITERS; i++) {
             Object o = new Object();
-            RuntimeOfUtil.assertEquals(Runtime.sizeOf(o) + 42L, Runtime.deepSizeOf(o, obj -> 42L));
+            RuntimeOfUtil.assertEquals(42L, Runtime.deepSizeOf(o, (obj) -> -42L));
         }
     }
 
@@ -268,22 +266,33 @@ public class DeepSizeOf {
             long sC = Runtime.sizeOf(c);
             long sCX = Runtime.sizeOf(c.x);
 
-            // -1: consider the object's shallow size and all its references.
-            // -2: only consider the object's shallow size but do not "go deep"
-            // -3: don't include object at all
-            // any other value will consider the object's shallow size plus the returned value.
+            RuntimeOfUtil.assertEquals(sA,
+                                       Runtime.deepSizeOf(a, (obj) -> {
+                                           if (obj instanceof DeepB)
+                                               return 0L; // don't consider DeepB (don't go deeper)
+                                           return Runtime.DEEP_SIZE_OF_SHALLOW | Runtime.DEEP_SIZE_OF_TRAVERSE;
+                                       }));
 
-            RuntimeOfUtil.assertEquals(sA + sB + sC + sCX,
-                                       Runtime.deepSizeOf(a, obj -> -1)
-                                       );
-
-            RuntimeOfUtil.assertEquals(sA + sB,
-                                       Runtime.deepSizeOf(a, obj -> (obj instanceof DeepB) ? -2 : -1)
-                                       );
+            RuntimeOfUtil.assertEquals(sA + sC + sCX,
+                                       Runtime.deepSizeOf(a, (obj) -> {
+                                           if (obj instanceof DeepB)
+                                               return Runtime.DEEP_SIZE_OF_TRAVERSE; // don't consider DeepB (but its references!)
+                                           return Runtime.DEEP_SIZE_OF_SHALLOW | Runtime.DEEP_SIZE_OF_TRAVERSE;
+                                       }));
 
             RuntimeOfUtil.assertEquals(sA,
-                                       Runtime.deepSizeOf(a, obj -> (obj instanceof DeepB) ? -3 : -1)
-                                       );
+                                       Runtime.deepSizeOf(a, (obj) -> {
+                                           if (obj instanceof DeepA)
+                                               return Runtime.DEEP_SIZE_OF_SHALLOW; // consider DeepA, but don't go deeper
+                                           return Runtime.DEEP_SIZE_OF_SHALLOW | Runtime.DEEP_SIZE_OF_TRAVERSE;
+                                       }));
+
+            RuntimeOfUtil.assertEquals(sA + sB,
+                                       Runtime.deepSizeOf(a, (obj) -> {
+                                           if (obj instanceof DeepB)
+                                               return Runtime.DEEP_SIZE_OF_SHALLOW; // consider DeepB, but don't go deeper
+                                           return Runtime.DEEP_SIZE_OF_SHALLOW | Runtime.DEEP_SIZE_OF_TRAVERSE;
+                                       }));
         }
     }
 

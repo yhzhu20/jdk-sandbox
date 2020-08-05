@@ -840,6 +840,19 @@ public class Runtime {
     private static native long sizeOf0(Object obj);
 
     /**
+     * Bit value for {@link #deepSizeOf(Object, ToLongFunction)}'s callback
+     * return value to continue traversal ("go deep") of the references of
+     * the object passed to the callback.
+     */
+    public static final long DEEP_SIZE_OF_TRAVERSE = 1;
+    /**
+     * Bit value for {@link #deepSizeOf(Object, ToLongFunction)}'s callback
+     * return value to consider the shallow size of the object passed to the
+     * callback.
+     */
+    public static final long DEEP_SIZE_OF_SHALLOW = 2;
+
+    /**
      * Returns the implementation-specific estimate of the amount of storage
      * consumed by the specified object and all objects referenced by it.
      * <p>
@@ -857,27 +870,22 @@ public class Runtime {
      * @since 16
      */
     public static long deepSizeOf(Object obj) {
-        return deepSizeOf(obj, (o) -> -1L);
+        return deepSizeOf(obj, (o) -> DEEP_SIZE_OF_TRAVERSE | DEEP_SIZE_OF_SHALLOW);
     }
 
     private static long handleIncludeCheck(ArrayDeque<Object> q, Object o, ToLongFunction<Object> ic, long ts, long os) {
         long t = ic.applyAsLong(o);
-        if (t == -1L) {
-            // Shallow size + all dependencies.
-            q.push(o);
-            return ts + os;
-        } else if (t == -2L) {
-            // Only shallow size.
-            return ts + os;
-        } else if (t == -3L) {
-            // Nothing.
-            return ts;
-        } else if (t >= 0) {
-            // Shallow size + addition.
-            return ts + os + t;
+        if (t > 0) {
+            if ((t & DEEP_SIZE_OF_TRAVERSE) != 0) {
+                q.push(o);
+            }
+            if ((t & DEEP_SIZE_OF_SHALLOW) != 0) {
+                ts += os;
+            }
         } else {
-            throw new IllegalStateException("includeCheck returned illegal value " + t);
+            ts -= t;
         }
+        return ts;
     }
 
     /**
@@ -893,24 +901,18 @@ public class Runtime {
      * "don't know" value if it refuses to provide the estimate.
      *
      * @param obj root object to start the estimate from
-     * @param includeCheck predicate/callback to evaluate whether and how
-     *        the given object should be included in the size calculation:
-     *        <ul>
-     *        <li>{@code -1}: consider the object's shallow size and all
-     *                        its references.</li>
-     *        <li>{@code -2}: only consider the object's shallow size but
-     *                        do not "go deep".</li>
-     *        <li>{@code -3}: don't include object at all</li>
-     *        <li>any other value will consider the object's shallow size
-     *            plus the returned value.
-     *        </ul>
+     * @param includeCheck callback to evaluate an object's size. The callback can
+     * return a positive value as a bitmask - valid values are
+     * {@link #DEEP_SIZE_OF_SHALLOW} to consider the object's shallow sise and
+     * {@link #DEEP_SIZE_OF_TRAVERSE} to traverse ("go deeper") the object's
+     * references. A negative value means that the absolute return value is
+     * considered and the object's references are not considered.
      * @return storage size in bytes, or {@code -1} if storage size is unknown
      * @throws NullPointerException if {@code obj} is {@code null}
      * @since 16
      */
     @DontInline // Semantics: make sure the object is not scalar replaced.
-    public static long deepSizeOf(Object obj,
-                                  ToLongFunction<Object> includeCheck) {
+    public static long deepSizeOf(Object obj, ToLongFunction<Object> includeCheck) {
         Objects.requireNonNull(obj);
 
         // We are potentially leaking the objects to includeCheck callback.
