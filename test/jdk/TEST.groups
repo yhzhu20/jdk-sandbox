@@ -286,7 +286,6 @@ jdk_jep8249196 = \
     java/lang/RuntimeTests/Ofs/ \
     java/lang/instrument/NullGetObjectSizeTest.java \
     java/lang/instrument/GetObjectSizeTest.java \
-    java/lang/instrument/StressGetObjectSizeApp.java \
     java/lang/instrument/StressGetObjectSizeTest.sh
 
 #
