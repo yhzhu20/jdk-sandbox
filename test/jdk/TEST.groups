@@ -282,6 +282,13 @@ jdk_jfr = \
 jdk_jfr_tier3 = \
     jdk/jfr/event/metadata/TestLookForUntestedEvents.java
 
+jdk_jep8249196 = \
+    java/lang/RuntimeTests/Ofs/ \
+    java/lang/instrument/NullGetObjectSizeTest.java \
+    java/lang/instrument/GetObjectSizeTest.java \
+    java/lang/instrument/StressGetObjectSizeApp.java \
+    java/lang/instrument/StressGetObjectSizeTest.sh
+
 #
 # Catch-all for other areas with a small number of tests
 #
