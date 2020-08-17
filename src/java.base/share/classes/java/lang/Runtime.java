@@ -1079,12 +1079,12 @@ public class Runtime {
      * the specified object, or refuses to provide this information.
      *
      * @param obj object to get the address of
-     * @return current object address, or "0" if {@code obj} is @{code null},
-     *         or {@code -1} if address is unknown
+     * @return current object address, or {@code -1} if address is unknown
      * @since 16
      */
     @DontInline // Semantics: make sure the object is not scalar replaced.
     public static long addressOf(Object obj) {
+        Objects.requireNonNull(obj);
         return addressOf0(obj);
     }
 

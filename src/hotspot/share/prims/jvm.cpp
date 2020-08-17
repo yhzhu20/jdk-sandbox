@@ -560,7 +560,7 @@ JVM_END
 
 JVM_ENTRY_NO_ENV(jlong, JVM_AddressOf(jobject obj))
   JVMWrapper("JVM_AddressOf");
-  if (obj == NULL) return 0;
+  assert(obj != NULL, "object must not be NULL");
   if (!RuntimeAddressOf) return -1;
 
   oop o = JNIHandles::resolve_non_null(obj);

@@ -179,7 +179,12 @@ public class AddressOf {
 
     private static void testNulls() {
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
-            RuntimeOfUtil.assertEquals(0, Runtime.addressOf(null));
+            try {
+                Runtime.addressOf(null);
+                RuntimeOfUtil.assertFail();
+            } catch (NullPointerException e) {
+                // expected
+            }
         }
     }
 
