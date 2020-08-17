@@ -7042,7 +7042,8 @@ bool LibraryCallKit::inline_addressOf() {
 
   Node* obj = argument(0);
   Node* raw_val = _gvn.transform(new CastP2XNode(NULL, obj));
-  Node* long_val = ConvX2L(raw_val);
+  Node* off_val = _gvn.transform(new AddXNode(raw_val, MakeConX(Universe::non_heap_offset())));
+  Node* long_val = ConvX2L(off_val);
 
   set_result(long_val);
   return true;

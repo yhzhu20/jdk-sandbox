@@ -564,7 +564,7 @@ JVM_ENTRY_NO_ENV(jlong, JVM_AddressOf(jobject obj))
   if (!RuntimeAddressOf) return -1;
 
   oop o = JNIHandles::resolve_non_null(obj);
-  return cast_from_oop<jlong>(o);
+  return cast_from_oop<jlong>(o) + Universe::non_heap_offset();
 JVM_END
 
 JVM_ENTRY_NO_ENV(jlong, JVM_FieldOffsetOf(jobject field))

@@ -1075,6 +1075,12 @@ public class Runtime {
      * time, including during the call. As such, this method is only useful for
      * low-level debugging and heap introspection in a quiescent application.
      * <p>
+     * The JVM is also free to provide non-verbatim answers, for example, adding
+     * the random offset in order to hide the real object addresses. Because of this,
+     * this method is useful to compare the relative Object positions, or inspecting
+     * the object alignments up to some high threshold, but not for accessing the objects
+     * via the naked native address.
+     * <p>
      * JVM may answer the "don't know" value if it does not know the address of
      * the specified object, or refuses to provide this information.
      *

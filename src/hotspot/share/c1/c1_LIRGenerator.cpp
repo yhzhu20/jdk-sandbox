@@ -1355,10 +1355,12 @@ void LIRGenerator::do_addressOf(Intrinsic* x) {
 
 #ifdef _LP64
   __ move(value.result(), reg, NULL);
+  __ add(reg, LIR_OprFact::intptrConst(Universe::non_heap_offset()), reg);
 #else
-  LIR_Opr res = new_register(T_LONG);
-  __ convert(Bytecodes::_i2l, value.result(), res);
-  __ move(res, reg, NULL);
+  LIR_Opr res = new_register(T_INT);
+  __ move(value.result(), res, NULL);
+  __ add(res, LIR_OprFact::intptrConst(Universe::non_heap_offset()), res);
+  __ convert(Bytecodes::_i2l, res, reg);
 #endif
 }
 
