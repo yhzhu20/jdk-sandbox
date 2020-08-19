@@ -181,6 +181,64 @@
  *                   SizeOf
  */
 
+/*
+ * @test
+ * @summary Test for Runtime.SizeOf with 32-bit compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ * @requires vm.debug
+ *
+ * @build sun.hotspot.WhiteBox
+ * @run driver ClassFileInstaller sun.hotspot.WhiteBox
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:ObjectAlignmentInBytes=32
+ *                   -Xint
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:ObjectAlignmentInBytes=32
+ *                   -XX:TieredStopAtLevel=1
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx128m
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:ObjectAlignmentInBytes=32
+ *                   -XX:-TieredCompilation
+ *                   SizeOf
+ */
+
+/*
+ * @test
+ * @summary Test for Runtime.SizeOf with zero-based compressed oops
+ * @library /test/lib
+ * @requires vm.bits == 64
+ * @requires vm.debug
+ *
+ * @build sun.hotspot.WhiteBox
+ * @run driver ClassFileInstaller sun.hotspot.WhiteBox
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:ObjectAlignmentInBytes=32
+ *                   -Xint
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:ObjectAlignmentInBytes=32
+ *                   -XX:TieredStopAtLevel=1
+ *                   SizeOf
+ *
+ * @run main/othervm -Xmx4g
+ *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
+ *                   -XX:ObjectAlignmentInBytes=32
+ *                   -XX:-TieredCompilation
+ *                   SizeOf
+ */
+
 import jdk.test.lib.Platform;
 import sun.hotspot.WhiteBox;
 
@@ -188,6 +246,9 @@ public class SizeOf {
 
     static final Boolean compressedOops = WhiteBox.getWhiteBox().getBooleanVMFlag("UseCompressedOops");
     static final int R = ((compressedOops == null) || (compressedOops == true)) ?  4 : 8;
+
+    static final Long align = WhiteBox.getWhiteBox().getIntxVMFlag("ObjectAlignmentInBytes");
+    static final int A = (align == null ? 8 : align.intValue());
 
     public static void main(String ... args) {
         testSize_newObject();
@@ -205,15 +266,19 @@ public class SizeOf {
         testNulls();
     }
 
+    private static int roundUp(int v, int a) {
+        return (v + a - 1) / a * a;
+    }
+
     private static void testSize_newObject() {
-        int expected = Platform.is64bit() ? 16 : 8;
+        int expected = roundUp(Platform.is64bit() ? 16 : 8, A);
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(new Object()));
         }
     }
 
     private static void testSize_localObject() {
-        int expected = Platform.is64bit() ? 16 : 8;
+        int expected = roundUp(Platform.is64bit() ? 16 : 8, A);
         Object o = new Object();
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(o));
@@ -223,14 +288,14 @@ public class SizeOf {
     static Object staticO = new Object();
 
     private static void testSize_fieldObject() {
-        int expected = Platform.is64bit() ? 16 : 8;
+        int expected = roundUp(Platform.is64bit() ? 16 : 8, A);
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(staticO));
         }
     }
 
     private static void testSize_newSmallByteArray() {
-        int expected = 1024 + 16;
+        int expected = roundUp(1024 + 16, A);
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(new byte[1024]));
         }
@@ -238,7 +303,7 @@ public class SizeOf {
 
     private static void testSize_localSmallByteArray() {
         byte[] arr = new byte[1024];
-        int expected = arr.length + 16;
+        int expected = roundUp(arr.length + 16, A);
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(arr));
         }
@@ -247,14 +312,14 @@ public class SizeOf {
     static byte[] smallArr = new byte[1024];
 
     private static void testSize_fieldSmallByteArray() {
-        int expected = smallArr.length + 16;
+        int expected = roundUp(smallArr.length + 16, A);
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(smallArr));
         }
     }
 
     private static void testSize_newSmallObjArray() {
-        int expected = 1024*R + 16;
+        int expected = roundUp(1024*R + 16, A);
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(new Object[1024]));
         }
@@ -262,7 +327,7 @@ public class SizeOf {
 
     private static void testSize_localSmallObjArray() {
         Object[] arr = new Object[1024];
-        int expected = arr.length*R + 16;
+        int expected = roundUp(arr.length*R + 16, A);
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(arr));
         }
@@ -271,7 +336,7 @@ public class SizeOf {
     static Object[] smallObjArr = new Object[1024];
 
     private static void testSize_fieldSmallObjArray() {
-        int expected = smallArr.length*R + 16;
+        int expected = roundUp(smallArr.length*R + 16, A);
         for (int c = 0; c < RuntimeOfUtil.ITERS; c++) {
             RuntimeOfUtil.assertEquals(expected, Runtime.sizeOf(smallObjArr));
         }
