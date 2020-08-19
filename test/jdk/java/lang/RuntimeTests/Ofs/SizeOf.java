@@ -41,21 +41,6 @@
  *
  * @run main/othervm -Xmx128m
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:TieredStopAtLevel=2
- *                   SizeOf
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:TieredStopAtLevel=3
- *                   SizeOf
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:TieredStopAtLevel=4
- *                   SizeOf
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
  *                   -XX:-TieredCompilation
  *                   SizeOf
  */
@@ -81,21 +66,6 @@
  *
  * @run main/othervm -Xmx4g
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:TieredStopAtLevel=2
- *                   SizeOf
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:TieredStopAtLevel=3
- *                   SizeOf
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:TieredStopAtLevel=4
- *                   SizeOf
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
  *                   -XX:-TieredCompilation
  *                   SizeOf
  */
@@ -117,21 +87,6 @@
  * @run main/othervm -Xmx128m -XX:-UseCompressedOops
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
  *                   -XX:TieredStopAtLevel=1
- *                   SizeOf
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:TieredStopAtLevel=2
- *                   SizeOf
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:TieredStopAtLevel=3
- *                   SizeOf
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:TieredStopAtLevel=4
  *                   SizeOf
  *
  * @run main/othervm -Xmx128m -XX:-UseCompressedOops
@@ -164,24 +119,6 @@
  * @run main/othervm -Xmx128m
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
  *                   -XX:FastAllocateSizeLimit=0
- *                   -XX:TieredStopAtLevel=2
- *                   SizeOf
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:FastAllocateSizeLimit=0
- *                   -XX:TieredStopAtLevel=3
- *                   SizeOf
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:FastAllocateSizeLimit=0
- *                   -XX:TieredStopAtLevel=4
- *                   SizeOf
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:FastAllocateSizeLimit=0
  *                   -XX:-TieredCompilation
  *                   SizeOf
  */
@@ -211,24 +148,6 @@
  * @run main/othervm -Xmx4g
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
  *                   -XX:FastAllocateSizeLimit=0
- *                   -XX:TieredStopAtLevel=2
- *                   SizeOf
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:FastAllocateSizeLimit=0
- *                   -XX:TieredStopAtLevel=3
- *                   SizeOf
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:FastAllocateSizeLimit=0
- *                   -XX:TieredStopAtLevel=4
- *                   SizeOf
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:FastAllocateSizeLimit=0
  *                   -XX:-TieredCompilation
  *                   SizeOf
  */
@@ -253,24 +172,6 @@
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
  *                   -XX:FastAllocateSizeLimit=0
  *                   -XX:TieredStopAtLevel=1
- *                   SizeOf
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:FastAllocateSizeLimit=0
- *                   -XX:TieredStopAtLevel=2
- *                   SizeOf
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:FastAllocateSizeLimit=0
- *                   -XX:TieredStopAtLevel=3
- *                   SizeOf
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni -XX:+WhiteBoxAPI -Xbootclasspath/a:.
- *                   -XX:FastAllocateSizeLimit=0
- *                   -XX:TieredStopAtLevel=4
  *                   SizeOf
  *
  * @run main/othervm -Xmx128m -XX:-UseCompressedOops

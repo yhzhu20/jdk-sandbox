@@ -42,24 +42,6 @@
  * @run main/othervm -Xmx128m
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
  *                   -XX:-RuntimeSizeOf
- *                   -XX:TieredStopAtLevel=2
- *                   DeepSizeOfDisabled
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:-RuntimeSizeOf
- *                   -XX:TieredStopAtLevel=3
- *                   DeepSizeOfDisabled
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:-RuntimeSizeOf
- *                   -XX:TieredStopAtLevel=4
- *                   DeepSizeOfDisabled
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:-RuntimeSizeOf
  *                   -XX:-TieredCompilation
  *                   DeepSizeOfDisabled
  */
@@ -85,24 +67,6 @@
  * @run main/othervm -Xmx4g
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
  *                   -XX:-RuntimeSizeOf
- *                   -XX:TieredStopAtLevel=2
- *                   DeepSizeOfDisabled
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:-RuntimeSizeOf
- *                   -XX:TieredStopAtLevel=3
- *                   DeepSizeOfDisabled
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:-RuntimeSizeOf
- *                   -XX:TieredStopAtLevel=4
- *                   DeepSizeOfDisabled
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:-RuntimeSizeOf
  *                   -XX:-TieredCompilation
  *                   DeepSizeOfDisabled
  */
@@ -123,24 +87,6 @@
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
  *                   -XX:-RuntimeSizeOf
  *                   -XX:TieredStopAtLevel=1
- *                   DeepSizeOfDisabled
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:-RuntimeSizeOf
- *                   -XX:TieredStopAtLevel=2
- *                   DeepSizeOfDisabled
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:-RuntimeSizeOf
- *                   -XX:TieredStopAtLevel=3
- *                   DeepSizeOfDisabled
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:-RuntimeSizeOf
- *                   -XX:TieredStopAtLevel=4
  *                   DeepSizeOfDisabled
  *
  * @run main/othervm -Xmx128m -XX:-UseCompressedOops

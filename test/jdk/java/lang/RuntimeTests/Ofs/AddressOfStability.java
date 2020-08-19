@@ -41,24 +41,6 @@
  * @run main/othervm -Xmx128m
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
  *                   -XX:CompileCommand=exclude,AddressOfStability::testInterpreted
- *                   -XX:TieredStopAtLevel=2
- *                   AddressOfStability
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:CompileCommand=exclude,AddressOfStability::testInterpreted
- *                   -XX:TieredStopAtLevel=3
- *                   AddressOfStability
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:CompileCommand=exclude,AddressOfStability::testInterpreted
- *                   -XX:TieredStopAtLevel=4
- *                   AddressOfStability
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:CompileCommand=exclude,AddressOfStability::testInterpreted
  *                   -XX:-TieredCompilation
  *                   AddressOfStability
  */
@@ -84,24 +66,6 @@
  * @run main/othervm -Xmx4g
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
  *                   -XX:CompileCommand=exclude,AddressOfStability::testInterpreted
- *                   -XX:TieredStopAtLevel=2
- *                   AddressOfStability
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:CompileCommand=exclude,AddressOfStability::testInterpreted
- *                   -XX:TieredStopAtLevel=3
- *                   AddressOfStability
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:CompileCommand=exclude,AddressOfStability::testInterpreted
- *                   -XX:TieredStopAtLevel=4
- *                   AddressOfStability
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:CompileCommand=exclude,AddressOfStability::testInterpreted
  *                   -XX:-TieredCompilation
  *                   AddressOfStability
  */
@@ -122,24 +86,6 @@
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
  *                   -XX:CompileCommand=exclude,AddressOfStability::testInterpreted
  *                   -XX:TieredStopAtLevel=1
- *                   AddressOfStability
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:CompileCommand=exclude,AddressOfStability::testInterpreted
- *                   -XX:TieredStopAtLevel=2
- *                   AddressOfStability
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:CompileCommand=exclude,AddressOfStability::testInterpreted
- *                   -XX:TieredStopAtLevel=3
- *                   AddressOfStability
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:CompileCommand=exclude,AddressOfStability::testInterpreted
- *                   -XX:TieredStopAtLevel=4
  *                   AddressOfStability
  *
  * @run main/othervm -Xmx128m -XX:-UseCompressedOops

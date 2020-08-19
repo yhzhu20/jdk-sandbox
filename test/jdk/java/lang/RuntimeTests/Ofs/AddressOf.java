@@ -38,21 +38,6 @@
  *
  * @run main/othervm -Xmx128m
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:TieredStopAtLevel=2
- *                   AddressOf
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:TieredStopAtLevel=3
- *                   AddressOf
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:TieredStopAtLevel=4
- *                   AddressOf
- *
- * @run main/othervm -Xmx128m
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
  *                   -XX:-TieredCompilation
  *                   AddressOf
  */
@@ -75,21 +60,6 @@
  *
  * @run main/othervm -Xmx4g
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:TieredStopAtLevel=2
- *                   AddressOf
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:TieredStopAtLevel=3
- *                   AddressOf
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:TieredStopAtLevel=4
- *                   AddressOf
- *
- * @run main/othervm -Xmx4g
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
  *                   -XX:-TieredCompilation
  *                   AddressOf
  */
@@ -108,21 +78,6 @@
  * @run main/othervm -Xmx128m -XX:-UseCompressedOops
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
  *                   -XX:TieredStopAtLevel=1
- *                   AddressOf
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:TieredStopAtLevel=2
- *                   AddressOf
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:TieredStopAtLevel=3
- *                   AddressOf
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:TieredStopAtLevel=4
  *                   AddressOf
  *
  * @run main/othervm -Xmx128m -XX:-UseCompressedOops

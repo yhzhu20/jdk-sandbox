@@ -112,21 +112,6 @@
  *
  * @run main/othervm -Xmx128m -XX:-UseCompressedOops
  *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:TieredStopAtLevel=2
- *                   DeepSizeOf
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:TieredStopAtLevel=3
- *                   DeepSizeOf
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
- *                   -XX:TieredStopAtLevel=4
- *                   DeepSizeOf
- *
- * @run main/othervm -Xmx128m -XX:-UseCompressedOops
- *                   -XX:+UnlockDiagnosticVMOptions -XX:+AbortVMOnCompilationFailure -Xcheck:jni
  *                   -XX:-TieredCompilation
  *                   DeepSizeOf
  */
