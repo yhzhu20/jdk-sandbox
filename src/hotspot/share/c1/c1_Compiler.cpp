@@ -230,10 +230,8 @@ bool Compiler::is_intrinsic_supported(const methodHandle& method) {
     break;
   case vmIntrinsics::_getReferencedObjects:
   case vmIntrinsics::_addressOf:
-    break;
   case vmIntrinsics::_sizeOf:
-    // temporarily disabled until it can handle arrays
-    return false;
+    break;
   default:
     return false; // Intrinsics not on the previous list are not available.
   }
