@@ -40,12 +40,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.StringTokenizer;
 
-import jdk.internal.HotSpotIntrinsicCandidate;
 import jdk.internal.access.SharedSecrets;
 import jdk.internal.loader.NativeLibrary;
 import jdk.internal.reflect.CallerSensitive;
 import jdk.internal.reflect.Reflection;
 import jdk.internal.vm.annotation.DontInline;
+import jdk.internal.vm.annotation.IntrinsicCandidate;
 import sun.security.util.SecurityConstants;
 
 /**
@@ -835,7 +835,7 @@ public class Runtime {
         return sizeOf0(obj);
     }
 
-    @HotSpotIntrinsicCandidate
+    @IntrinsicCandidate
     private static native long sizeOf0(Object obj);
 
     /**
@@ -992,7 +992,7 @@ public class Runtime {
      * @param refBuf reference buffer
      * @return number of valid elements in buffer, -1 if buffer is too small
      */
-    @HotSpotIntrinsicCandidate
+    @IntrinsicCandidate
     private static native int getReferencedObjects(Object obj, Object[] refBuf);
 
     private static final class IdentityHashSet {
@@ -1093,7 +1093,7 @@ public class Runtime {
         return addressOf0(obj);
     }
 
-    @HotSpotIntrinsicCandidate
+    @IntrinsicCandidate
     private static native long addressOf0(Object obj);
 
     /**

@@ -1364,11 +1364,27 @@ void LIRGenerator::do_addressOf(Intrinsic* x) {
 #endif
 }
 
+void LIRGenerator::do_sizeOf(Intrinsic* x) {
+  assert(x->number_of_arguments() == 1, "wrong type");
+
+  if (!RuntimeSizeOf) {
+    LIR_Opr result_reg = rlock_result(x);
+    __ move(LIR_OprFact::longConst(-1), result_reg);
+    return;
+  }
+
+  do_sizeOf_impl(x, 0);
+}
+
 void LIRGenerator::do_getObjectSize(Intrinsic* x) {
   assert(x->number_of_arguments() == 3, "wrong type");
+  do_sizeOf_impl(x, 2);
+}
+
+void LIRGenerator::do_sizeOf_impl(Intrinsic* x, int arg_idx) {
   LIR_Opr result_reg = rlock_result(x);
 
-  LIRItem value(x->argument_at(2), this);
+  LIRItem value(x->argument_at(arg_idx), this);
   value.load_item();
 
   LIR_Opr klass = new_register(T_METADATA);
@@ -3188,6 +3204,7 @@ void LIRGenerator::do_Intrinsic(Intrinsic* x) {
   case vmIntrinsics::_getClass:       do_getClass(x);      break;
   case vmIntrinsics::_currentThread:  do_currentThread(x); break;
   case vmIntrinsics::_getObjectSize:  do_getObjectSize(x); break;
+  case vmIntrinsics::_sizeOf:         do_sizeOf(x);        break;
   case vmIntrinsics::_addressOf:      do_addressOf(x);     break;
   case vmIntrinsics::_getReferencedObjects: do_getReferencedObjects(x); break;
 

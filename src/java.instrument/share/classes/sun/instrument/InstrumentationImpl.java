@@ -211,8 +211,7 @@ public class InstrumentationImpl implements Instrumentation {
         if (objectToSize == null) {
             throw new NullPointerException("null passed as 'objectToSize' in getObjectSize");
         }
-        // Call the intrinsified method instead.
-        return Runtime.sizeOf(objectToSize);
+        return getObjectSize0(mNativeAgent, objectToSize);
     }
 
     public void

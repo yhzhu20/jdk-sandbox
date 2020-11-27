@@ -2492,23 +2492,21 @@ const intx ObjectAlignmentInBytes = 8;
   product(bool, DeoptimizeNMethodBarriersALot, false, DIAGNOSTIC,           \
                 "Make nmethod barriers deoptimise a lot.")                  \
                                                                             \
-<<<<<<< HEAD
-  diagnostic(bool, RuntimeAddressOf, true,                                  \
-                "Enable low-level Runtime.addressOf methods.")              \
-                                                                            \
-  diagnostic(bool, RuntimeFieldOf, true,                                    \
-                "Enable low-level Runtime.field*Of methods.")               \
-                                                                            \
-  diagnostic(bool, RuntimeSizeOf, true,                                     \
-                "Enable low-level Runtime.*sizeOOf methods.")               \
-=======
   develop(bool, VerifyCrossModifyFence,                                     \
           false AARCH64_ONLY(DEBUG_ONLY(||true)),                           \
              "Mark all threads after a safepoint, and clear on a modify "   \
              "fence. Add cleanliness checks.")                              \
+                                                                            \
+  product(bool, RuntimeAddressOf, true, DIAGNOSTIC,                         \
+                "Enable low-level Runtime.addressOf methods.")              \
+                                                                            \
+  product(bool, RuntimeFieldOf, true, DIAGNOSTIC,                           \
+                "Enable low-level Runtime.field*Of methods.")               \
+                                                                            \
+  product(bool, RuntimeSizeOf, true, DIAGNOSTIC,                            \
+                "Enable low-level Runtime.*sizeOOf methods.")               \
 
 // end of RUNTIME_FLAGS
->>>>>>> master
 
 // Interface macros
 #define DECLARE_PRODUCT_FLAG(type, name, value, ...)      extern "C" type name;

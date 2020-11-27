@@ -343,5 +343,10 @@ class LibraryCallKit : public GraphKit {
   }
 
   bool inline_getObjectSize();
+  bool inline_sizeOf();
+  bool inline_sizeOf_impl(Node* obj);
+
+  bool inline_addressOf();
+  bool inline_getReferencedObjects();
 };
 
