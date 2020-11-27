@@ -37,15 +37,13 @@
 #include "opto/addnode.hpp"
 #include "opto/arraycopynode.hpp"
 #include "opto/c2compiler.hpp"
-#include "opto/callGenerator.hpp"
 #include "opto/castnode.hpp"
 #include "opto/cfgnode.hpp"
 #include "opto/convertnode.hpp"
 #include "opto/countbitsnode.hpp"
-#include "opto/intrinsicnode.hpp"
 #include "opto/idealKit.hpp"
+#include "opto/library_call.hpp"
 #include "opto/mathexactnode.hpp"
-#include "opto/movenode.hpp"
 #include "opto/mulnode.hpp"
 #include "opto/narrowptrnode.hpp"
 #include "opto/opaquenode.hpp"
@@ -60,6 +58,7 @@
 #include "utilities/macros.hpp"
 #include "utilities/powerOfTwo.hpp"
 
+<<<<<<< HEAD
 class LibraryIntrinsic : public InlineCallGenerator {
   // Extend the set of intrinsics known to the runtime:
  public:
@@ -349,6 +348,8 @@ class LibraryCallKit : public GraphKit {
   }
 };
 
+=======
+>>>>>>> master
 //---------------------------make_vm_intrinsic----------------------------
 CallGenerator* Compile::make_vm_intrinsic(ciMethod* m, bool is_virtual) {
   vmIntrinsics::ID id = m->intrinsic_id();
@@ -384,12 +385,6 @@ CallGenerator* Compile::make_vm_intrinsic(ciMethod* m, bool is_virtual) {
   } else {
     return NULL;
   }
-}
-
-//----------------------register_library_intrinsics-----------------------
-// Initialize this file's data structures, for each Compile instance.
-void Compile::register_library_intrinsics() {
-  // Nothing to do here.
 }
 
 JVMState* LibraryIntrinsic::generate(JVMState* jvms) {
@@ -457,6 +452,7 @@ JVMState* LibraryIntrinsic::generate(JVMState* jvms) {
   }
   C->gather_intrinsic_statistics(intrinsic_id(), is_virtual(), Compile::_intrinsic_failed);
   C->print_inlining_update(this);
+
   return NULL;
 }
 
@@ -534,7 +530,6 @@ bool LibraryCallKit::try_to_inline(int predicate) {
   }
   assert(merged_memory(), "");
 
-
   switch (intrinsic_id()) {
   case vmIntrinsics::_hashCode:                 return inline_native_hashcode(intrinsic()->is_virtual(), !is_static);
   case vmIntrinsics::_identityHashCode:         return inline_native_hashcode(/*!virtual*/ false,         is_static);
@@ -595,7 +590,8 @@ bool LibraryCallKit::try_to_inline(int predicate) {
   case vmIntrinsics::_indexOfIL:                return inline_string_indexOfI(StrIntrinsicNode::LL);
   case vmIntrinsics::_indexOfIU:                return inline_string_indexOfI(StrIntrinsicNode::UU);
   case vmIntrinsics::_indexOfIUL:               return inline_string_indexOfI(StrIntrinsicNode::UL);
-  case vmIntrinsics::_indexOfU_char:            return inline_string_indexOfChar();
+  case vmIntrinsics::_indexOfU_char:            return inline_string_indexOfChar(StrIntrinsicNode::U);
+  case vmIntrinsics::_indexOfL_char:            return inline_string_indexOfChar(StrIntrinsicNode::L);
 
   case vmIntrinsics::_equalsL:                  return inline_string_equals(StrIntrinsicNode::LL);
   case vmIntrinsics::_equalsU:                  return inline_string_equals(StrIntrinsicNode::UU);
@@ -779,7 +775,8 @@ bool LibraryCallKit::try_to_inline(int predicate) {
   case vmIntrinsics::_copyOfRange:              return inline_array_copyOf(true);
   case vmIntrinsics::_equalsB:                  return inline_array_equals(StrIntrinsicNode::LL);
   case vmIntrinsics::_equalsC:                  return inline_array_equals(StrIntrinsicNode::UU);
-  case vmIntrinsics::_Preconditions_checkIndex: return inline_preconditions_checkIndex();
+  case vmIntrinsics::_Preconditions_checkIndex: return inline_preconditions_checkIndex(T_INT);
+  case vmIntrinsics::_Preconditions_checkLongIndex: return inline_preconditions_checkIndex(T_LONG);
   case vmIntrinsics::_clone:                    return inline_native_clone(intrinsic()->is_virtual());
 
   case vmIntrinsics::_allocateUninitializedArray: return inline_unsafe_newArray(true);
@@ -838,6 +835,7 @@ bool LibraryCallKit::try_to_inline(int predicate) {
   case vmIntrinsics::_sha_implCompress:
   case vmIntrinsics::_sha2_implCompress:
   case vmIntrinsics::_sha5_implCompress:
+  case vmIntrinsics::_sha3_implCompress:
     return inline_digestBase_implCompress(intrinsic_id());
 
   case vmIntrinsics::_digestBase_implCompressMB:
@@ -869,6 +867,8 @@ bool LibraryCallKit::try_to_inline(int predicate) {
     return inline_ghash_processBlocks();
   case vmIntrinsics::_base64_encodeBlock:
     return inline_base64_encodeBlock();
+  case vmIntrinsics::_base64_decodeBlock:
+    return inline_base64_decodeBlock();
 
   case vmIntrinsics::_encodeISOArray:
   case vmIntrinsics::_encodeByteISOArray:
@@ -915,6 +915,7 @@ bool LibraryCallKit::try_to_inline(int predicate) {
   case vmIntrinsics::_minD:
     return inline_fp_min_max(intrinsic_id());
 
+<<<<<<< HEAD
   case vmIntrinsics::_sizeOf:
     return inline_sizeOf();
 
@@ -923,6 +924,49 @@ bool LibraryCallKit::try_to_inline(int predicate) {
 
   case vmIntrinsics::_getReferencedObjects:
     return inline_getReferencedObjects();
+=======
+  case vmIntrinsics::_VectorUnaryOp:
+    return inline_vector_nary_operation(1);
+  case vmIntrinsics::_VectorBinaryOp:
+    return inline_vector_nary_operation(2);
+  case vmIntrinsics::_VectorTernaryOp:
+    return inline_vector_nary_operation(3);
+  case vmIntrinsics::_VectorBroadcastCoerced:
+    return inline_vector_broadcast_coerced();
+  case vmIntrinsics::_VectorShuffleIota:
+    return inline_vector_shuffle_iota();
+  case vmIntrinsics::_VectorShuffleToVector:
+    return inline_vector_shuffle_to_vector();
+  case vmIntrinsics::_VectorLoadOp:
+    return inline_vector_mem_operation(/*is_store=*/false);
+  case vmIntrinsics::_VectorStoreOp:
+    return inline_vector_mem_operation(/*is_store=*/true);
+  case vmIntrinsics::_VectorGatherOp:
+    return inline_vector_gather_scatter(/*is_scatter*/ false);
+  case vmIntrinsics::_VectorScatterOp:
+    return inline_vector_gather_scatter(/*is_scatter*/ true);
+  case vmIntrinsics::_VectorReductionCoerced:
+    return inline_vector_reduction();
+  case vmIntrinsics::_VectorTest:
+    return inline_vector_test();
+  case vmIntrinsics::_VectorBlend:
+    return inline_vector_blend();
+  case vmIntrinsics::_VectorRearrange:
+    return inline_vector_rearrange();
+  case vmIntrinsics::_VectorCompare:
+    return inline_vector_compare();
+  case vmIntrinsics::_VectorBroadcastInt:
+    return inline_vector_broadcast_int();
+  case vmIntrinsics::_VectorConvert:
+    return inline_vector_convert();
+  case vmIntrinsics::_VectorInsert:
+    return inline_vector_insert();
+  case vmIntrinsics::_VectorExtract:
+    return inline_vector_extract();
+
+  case vmIntrinsics::_getObjectSize:
+    return inline_getObjectSize();
+>>>>>>> master
 
   default:
     // If you get here, it may be that someone has added a new intrinsic
@@ -1261,14 +1305,15 @@ bool LibraryCallKit::inline_hasNegatives() {
   return true;
 }
 
-bool LibraryCallKit::inline_preconditions_checkIndex() {
+bool LibraryCallKit::inline_preconditions_checkIndex(BasicType bt) {
   Node* index = argument(0);
-  Node* length = argument(1);
+  Node* length = bt == T_INT ? argument(1) : argument(2);
   if (too_many_traps(Deoptimization::Reason_intrinsic) || too_many_traps(Deoptimization::Reason_range_check)) {
     return false;
   }
 
-  Node* len_pos_cmp = _gvn.transform(new CmpINode(length, intcon(0)));
+  // check that length is positive
+  Node* len_pos_cmp = _gvn.transform(CmpNode::make(length, integercon(0, bt), bt));
   Node* len_pos_bol = _gvn.transform(new BoolNode(len_pos_cmp, BoolTest::ge));
 
   {
@@ -1277,11 +1322,19 @@ bool LibraryCallKit::inline_preconditions_checkIndex() {
                   Deoptimization::Action_make_not_entrant);
   }
 
+  // length is now known postive, add a cast node to make this explicit
+  jlong upper_bound = _gvn.type(length)->is_integer(bt)->hi_as_long();
+  Node* casted_length = ConstraintCastNode::make(control(), length, TypeInteger::make(0, upper_bound, Type::WidenMax, bt), bt);
+  casted_length = _gvn.transform(casted_length);
+  replace_in_map(length, casted_length);
+  length = casted_length;
+
   if (stopped()) {
     return false;
   }
 
-  Node* rc_cmp = _gvn.transform(new CmpUNode(index, length));
+  // Use an unsigned comparison for the range check itself
+  Node* rc_cmp = _gvn.transform(CmpNode::make(index, length, bt, true));
   BoolTest::mask btest = BoolTest::lt;
   Node* rc_bool = _gvn.transform(new BoolNode(rc_cmp, btest));
   RangeCheckNode* rc = new RangeCheckNode(control(), rc_bool, PROB_MAX, COUNT_UNKNOWN);
@@ -1301,8 +1354,8 @@ bool LibraryCallKit::inline_preconditions_checkIndex() {
     return false;
   }
 
-  Node* result = new CastIINode(index, TypeInt::make(0, _gvn.type(length)->is_int()->_hi, Type::WidenMax));
-  result->set_req(0, control());
+  // index is now known to be >= 0 and < length, cast it
+  Node* result = ConstraintCastNode::make(control(), index, TypeInteger::make(0, upper_bound, Type::WidenMax, bt), bt);
   result = _gvn.transform(result);
   set_result(result);
   replace_in_map(index, result);
@@ -1444,7 +1497,7 @@ Node* LibraryCallKit::make_indexOf_node(Node* src_start, Node* src_count, Node* 
 }
 
 //-----------------------------inline_string_indexOfChar-----------------------
-bool LibraryCallKit::inline_string_indexOfChar() {
+bool LibraryCallKit::inline_string_indexOfChar(StrIntrinsicNode::ArgEnc ae) {
   if (too_many_traps(Deoptimization::Reason_intrinsic)) {
     return false;
   }
@@ -1459,12 +1512,12 @@ bool LibraryCallKit::inline_string_indexOfChar() {
 
   src = must_be_not_null(src, true);
 
-  Node* src_offset = _gvn.transform(new LShiftINode(from_index, intcon(1)));
+  Node* src_offset = ae == StrIntrinsicNode::L ? from_index : _gvn.transform(new LShiftINode(from_index, intcon(1)));
   Node* src_start = array_element_address(src, src_offset, T_BYTE);
   Node* src_count = _gvn.transform(new SubINode(max, from_index));
 
   // Range checks
-  generate_string_range_check(src, src_offset, src_count, true);
+  generate_string_range_check(src, src_offset, src_count, ae == StrIntrinsicNode::U);
   if (stopped()) {
     return true;
   }
@@ -1472,7 +1525,7 @@ bool LibraryCallKit::inline_string_indexOfChar() {
   RegionNode* region = new RegionNode(3);
   Node* phi = new PhiNode(region, TypeInt::INT);
 
-  Node* result = new StrIndexOfCharNode(control(), memory(TypeAryPtr::BYTES), src_start, src_count, tgt, StrIntrinsicNode::none);
+  Node* result = new StrIndexOfCharNode(control(), memory(TypeAryPtr::BYTES), src_start, src_count, tgt, ae);
   C->set_has_split_ifs(true); // Has chance for split-if optimization
   _gvn.transform(result);
 
@@ -2267,7 +2320,7 @@ LibraryCallKit::classify_unsafe_addr(Node* &base, Node* &offset, BasicType type)
   }
 }
 
-inline Node* LibraryCallKit::make_unsafe_address(Node*& base, Node* offset, DecoratorSet decorators, BasicType type, bool can_cast) {
+Node* LibraryCallKit::make_unsafe_address(Node*& base, Node* offset, DecoratorSet decorators, BasicType type, bool can_cast) {
   Node* uncasted_base = base;
   int kind = classify_unsafe_addr(uncasted_base, offset, type);
   if (kind == Type::RawPtr) {
@@ -5877,22 +5930,10 @@ bool LibraryCallKit::inline_aescrypt_Block(vmIntrinsics::ID id) {
   Node* k_start = get_key_start_from_aescrypt_object(aescrypt_object);
   if (k_start == NULL) return false;
 
-  if (Matcher::pass_original_key_for_aes()) {
-    // on SPARC we need to pass the original key since key expansion needs to happen in intrinsics due to
-    // compatibility issues between Java key expansion and SPARC crypto instructions
-    Node* original_k_start = get_original_key_start_from_aescrypt_object(aescrypt_object);
-    if (original_k_start == NULL) return false;
-
-    // Call the stub.
-    make_runtime_call(RC_LEAF|RC_NO_FP, OptoRuntime::aescrypt_block_Type(),
-                      stubAddr, stubName, TypePtr::BOTTOM,
-                      src_start, dest_start, k_start, original_k_start);
-  } else {
-    // Call the stub.
-    make_runtime_call(RC_LEAF|RC_NO_FP, OptoRuntime::aescrypt_block_Type(),
-                      stubAddr, stubName, TypePtr::BOTTOM,
-                      src_start, dest_start, k_start);
-  }
+  // Call the stub.
+  make_runtime_call(RC_LEAF|RC_NO_FP, OptoRuntime::aescrypt_block_Type(),
+                    stubAddr, stubName, TypePtr::BOTTOM,
+                    src_start, dest_start, k_start);
 
   return true;
 }
@@ -5975,25 +6016,11 @@ bool LibraryCallKit::inline_cipherBlockChaining_AESCrypt(vmIntrinsics::ID id) {
   if (objRvec == NULL) return false;
   Node* r_start = array_element_address(objRvec, intcon(0), T_BYTE);
 
-  Node* cbcCrypt;
-  if (Matcher::pass_original_key_for_aes()) {
-    // on SPARC we need to pass the original key since key expansion needs to happen in intrinsics due to
-    // compatibility issues between Java key expansion and SPARC crypto instructions
-    Node* original_k_start = get_original_key_start_from_aescrypt_object(aescrypt_object);
-    if (original_k_start == NULL) return false;
-
-    // Call the stub, passing src_start, dest_start, k_start, r_start, src_len and original_k_start
-    cbcCrypt = make_runtime_call(RC_LEAF|RC_NO_FP,
-                                 OptoRuntime::cipherBlockChaining_aescrypt_Type(),
-                                 stubAddr, stubName, TypePtr::BOTTOM,
-                                 src_start, dest_start, k_start, r_start, len, original_k_start);
-  } else {
-    // Call the stub, passing src_start, dest_start, k_start, r_start and src_len
-    cbcCrypt = make_runtime_call(RC_LEAF|RC_NO_FP,
-                                 OptoRuntime::cipherBlockChaining_aescrypt_Type(),
-                                 stubAddr, stubName, TypePtr::BOTTOM,
-                                 src_start, dest_start, k_start, r_start, len);
-  }
+  // Call the stub, passing src_start, dest_start, k_start, r_start and src_len
+  Node* cbcCrypt = make_runtime_call(RC_LEAF|RC_NO_FP,
+                                     OptoRuntime::cipherBlockChaining_aescrypt_Type(),
+                                     stubAddr, stubName, TypePtr::BOTTOM,
+                                     src_start, dest_start, k_start, r_start, len);
 
   // return cipher length (int)
   Node* retvalue = _gvn.transform(new ProjNode(cbcCrypt, TypeFunc::Parms));
@@ -6072,16 +6099,11 @@ bool LibraryCallKit::inline_electronicCodeBook_AESCrypt(vmIntrinsics::ID id) {
   Node* k_start = get_key_start_from_aescrypt_object(aescrypt_object);
   if (k_start == NULL) return false;
 
-  Node* ecbCrypt;
-  if (Matcher::pass_original_key_for_aes()) {
-    // no SPARC version for AES/ECB intrinsics now.
-    return false;
-  }
   // Call the stub, passing src_start, dest_start, k_start, r_start and src_len
-  ecbCrypt = make_runtime_call(RC_LEAF | RC_NO_FP,
-                               OptoRuntime::electronicCodeBook_aescrypt_Type(),
-                               stubAddr, stubName, TypePtr::BOTTOM,
-                               src_start, dest_start, k_start, len);
+  Node* ecbCrypt = make_runtime_call(RC_LEAF | RC_NO_FP,
+                                     OptoRuntime::electronicCodeBook_aescrypt_Type(),
+                                     stubAddr, stubName, TypePtr::BOTTOM,
+                                     src_start, dest_start, k_start, len);
 
   // return cipher length (int)
   Node* retvalue = _gvn.transform(new ProjNode(ecbCrypt, TypeFunc::Parms));
@@ -6156,16 +6178,11 @@ bool LibraryCallKit::inline_counterMode_AESCrypt(vmIntrinsics::ID id) {
   Node* saved_encCounter_start = array_element_address(saved_encCounter, intcon(0), T_BYTE);
   Node* used = field_address_from_object(counterMode_object, "used", "I", /*is_exact*/ false);
 
-  Node* ctrCrypt;
-  if (Matcher::pass_original_key_for_aes()) {
-    // no SPARC version for AES/CTR intrinsics now.
-    return false;
-  }
   // Call the stub, passing src_start, dest_start, k_start, r_start and src_len
-  ctrCrypt = make_runtime_call(RC_LEAF|RC_NO_FP,
-                               OptoRuntime::counterMode_aescrypt_Type(),
-                               stubAddr, stubName, TypePtr::BOTTOM,
-                               src_start, dest_start, k_start, cnt_start, len, saved_encCounter_start, used);
+  Node* ctrCrypt = make_runtime_call(RC_LEAF|RC_NO_FP,
+                                     OptoRuntime::counterMode_aescrypt_Type(),
+                                     stubAddr, stubName, TypePtr::BOTTOM,
+                                     src_start, dest_start, k_start, cnt_start, len, saved_encCounter_start, used);
 
   // return cipher length (int)
   Node* retvalue = _gvn.transform(new ProjNode(ctrCrypt, TypeFunc::Parms));
@@ -6195,17 +6212,6 @@ Node * LibraryCallKit::get_key_start_from_aescrypt_object(Node *aescrypt_object)
   // now have the array, need to get the start address of the K array
   Node* k_start = array_element_address(objAESCryptKey, intcon(0), T_INT);
   return k_start;
-}
-
-//------------------------------get_original_key_start_from_aescrypt_object-----------------------
-Node * LibraryCallKit::get_original_key_start_from_aescrypt_object(Node *aescrypt_object) {
-  Node* objAESCryptKey = load_field_from_object(aescrypt_object, "lastKey", "[B", /*is_exact*/ false);
-  assert (objAESCryptKey != NULL, "wrong version of com.sun.crypto.provider.AESCrypt");
-  if (objAESCryptKey == NULL) return (Node *) NULL;
-
-  // now have the array, need to get the start address of the lastKey array
-  Node* original_k_start = array_element_address(objAESCryptKey, intcon(0), T_BYTE);
-  return original_k_start;
 }
 
 //----------------------------inline_cipherBlockChaining_AESCrypt_predicate----------------------------
@@ -6440,6 +6446,40 @@ bool LibraryCallKit::inline_base64_encodeBlock() {
   return true;
 }
 
+bool LibraryCallKit::inline_base64_decodeBlock() {
+  address stubAddr;
+  const char *stubName;
+  assert(UseBASE64Intrinsics, "need Base64 intrinsics support");
+  assert(callee()->signature()->size() == 6, "base64_decodeBlock has 6 parameters");
+  stubAddr = StubRoutines::base64_decodeBlock();
+  stubName = "decodeBlock";
+
+  if (!stubAddr) return false;
+  Node* base64obj = argument(0);
+  Node* src = argument(1);
+  Node* src_offset = argument(2);
+  Node* len = argument(3);
+  Node* dest = argument(4);
+  Node* dest_offset = argument(5);
+  Node* isURL = argument(6);
+
+  src = must_be_not_null(src, true);
+  dest = must_be_not_null(dest, true);
+
+  Node* src_start = array_element_address(src, intcon(0), T_BYTE);
+  assert(src_start, "source array is NULL");
+  Node* dest_start = array_element_address(dest, intcon(0), T_BYTE);
+  assert(dest_start, "destination array is NULL");
+
+  Node* call = make_runtime_call(RC_LEAF,
+                                 OptoRuntime::base64_decodeBlock_Type(),
+                                 stubAddr, stubName, TypePtr::BOTTOM,
+                                 src_start, src_offset, len, dest_start, dest_offset, isURL);
+  Node* result = _gvn.transform(new ProjNode(call, TypeFunc::Parms));
+  set_result(result);
+  return true;
+}
+
 //------------------------------inline_digestBase_implCompress-----------------------
 //
 // Calculate MD5 for single-block byte[] array.
@@ -6453,6 +6493,9 @@ bool LibraryCallKit::inline_base64_encodeBlock() {
 //
 // Calculate SHA5 (i.e., SHA-384 or SHA-512) for single-block byte[] array.
 // void com.sun.security.provider.SHA5.implCompress(byte[] buf, int ofs)
+//
+// Calculate SHA3 (i.e., SHA3-224 or SHA3-256 or SHA3-384 or SHA3-512) for single-block byte[] array.
+// void com.sun.security.provider.SHA3.implCompress(byte[] buf, int ofs)
 //
 bool LibraryCallKit::inline_digestBase_implCompress(vmIntrinsics::ID id) {
   assert(callee()->signature()->size() == 2, "sha_implCompress has 2 parameters");
@@ -6476,33 +6519,42 @@ bool LibraryCallKit::inline_digestBase_implCompress(vmIntrinsics::ID id) {
   src = must_be_not_null(src, true);
   Node* src_start = array_element_address(src, ofs, src_elem);
   Node* state = NULL;
+  Node* digest_length = NULL;
   address stubAddr;
   const char *stubName;
 
   switch(id) {
   case vmIntrinsics::_md5_implCompress:
     assert(UseMD5Intrinsics, "need MD5 instruction support");
-    state = get_state_from_digest_object(digestBase_obj);
+    state = get_state_from_digest_object(digestBase_obj, "[I");
     stubAddr = StubRoutines::md5_implCompress();
     stubName = "md5_implCompress";
     break;
   case vmIntrinsics::_sha_implCompress:
     assert(UseSHA1Intrinsics, "need SHA1 instruction support");
-    state = get_state_from_digest_object(digestBase_obj);
+    state = get_state_from_digest_object(digestBase_obj, "[I");
     stubAddr = StubRoutines::sha1_implCompress();
     stubName = "sha1_implCompress";
     break;
   case vmIntrinsics::_sha2_implCompress:
     assert(UseSHA256Intrinsics, "need SHA256 instruction support");
-    state = get_state_from_digest_object(digestBase_obj);
+    state = get_state_from_digest_object(digestBase_obj, "[I");
     stubAddr = StubRoutines::sha256_implCompress();
     stubName = "sha256_implCompress";
     break;
   case vmIntrinsics::_sha5_implCompress:
     assert(UseSHA512Intrinsics, "need SHA512 instruction support");
-    state = get_long_state_from_digest_object(digestBase_obj);
+    state = get_state_from_digest_object(digestBase_obj, "[J");
     stubAddr = StubRoutines::sha512_implCompress();
     stubName = "sha512_implCompress";
+    break;
+  case vmIntrinsics::_sha3_implCompress:
+    assert(UseSHA3Intrinsics, "need SHA3 instruction support");
+    state = get_state_from_digest_object(digestBase_obj, "[B");
+    stubAddr = StubRoutines::sha3_implCompress();
+    stubName = "sha3_implCompress";
+    digest_length = get_digest_length_from_digest_object(digestBase_obj);
+    if (digest_length == NULL) return false;
     break;
   default:
     fatal_unexpected_iid(id);
@@ -6514,22 +6566,29 @@ bool LibraryCallKit::inline_digestBase_implCompress(vmIntrinsics::ID id) {
   if (stubAddr == NULL) return false;
 
   // Call the stub.
-  Node* call = make_runtime_call(RC_LEAF|RC_NO_FP, OptoRuntime::digestBase_implCompress_Type(),
-                                 stubAddr, stubName, TypePtr::BOTTOM,
-                                 src_start, state);
+  Node* call;
+  if (digest_length == NULL) {
+    call = make_runtime_call(RC_LEAF|RC_NO_FP, OptoRuntime::digestBase_implCompress_Type(false),
+                             stubAddr, stubName, TypePtr::BOTTOM,
+                             src_start, state);
+  } else {
+    call = make_runtime_call(RC_LEAF|RC_NO_FP, OptoRuntime::digestBase_implCompress_Type(true),
+                             stubAddr, stubName, TypePtr::BOTTOM,
+                             src_start, state, digest_length);
+  }
 
   return true;
 }
 
 //------------------------------inline_digestBase_implCompressMB-----------------------
 //
-// Calculate MD5/SHA/SHA2/SHA5 for multi-block byte[] array.
+// Calculate MD5/SHA/SHA2/SHA5/SHA3 for multi-block byte[] array.
 // int com.sun.security.provider.DigestBase.implCompressMultiBlock(byte[] b, int ofs, int limit)
 //
 bool LibraryCallKit::inline_digestBase_implCompressMB(int predicate) {
-  assert(UseMD5Intrinsics || UseSHA1Intrinsics || UseSHA256Intrinsics || UseSHA512Intrinsics,
-         "need MD5/SHA1/SHA256/SHA512 instruction support");
-  assert((uint)predicate < 4, "sanity");
+  assert(UseMD5Intrinsics || UseSHA1Intrinsics || UseSHA256Intrinsics || UseSHA512Intrinsics || UseSHA3Intrinsics,
+         "need MD5/SHA1/SHA256/SHA512/SHA3 instruction support");
+  assert((uint)predicate < 5, "sanity");
   assert(callee()->signature()->size() == 3, "digestBase_implCompressMB has 3 parameters");
 
   Node* digestBase_obj = argument(0); // The receiver was checked for NULL already.
@@ -6555,7 +6614,7 @@ bool LibraryCallKit::inline_digestBase_implCompressMB(int predicate) {
   const char* klass_digestBase_name = NULL;
   const char* stub_name = NULL;
   address     stub_addr = NULL;
-  bool        long_state = false;
+  const char* state_type = "[I";
 
   switch (predicate) {
   case 0:
@@ -6584,7 +6643,15 @@ bool LibraryCallKit::inline_digestBase_implCompressMB(int predicate) {
       klass_digestBase_name = "sun/security/provider/SHA5";
       stub_name = "sha512_implCompressMB";
       stub_addr = StubRoutines::sha512_implCompressMB();
-      long_state = true;
+      state_type = "[J";
+    }
+    break;
+  case 4:
+    if (vmIntrinsics::is_intrinsic_available(vmIntrinsics::_sha3_implCompress)) {
+      klass_digestBase_name = "sun/security/provider/SHA3";
+      stub_name = "sha3_implCompressMB";
+      stub_addr = StubRoutines::sha3_implCompressMB();
+      state_type = "[B";
     }
     break;
   default:
@@ -6602,33 +6669,43 @@ bool LibraryCallKit::inline_digestBase_implCompressMB(int predicate) {
     ciKlass* klass_digestBase = tinst->klass()->as_instance_klass()->find_klass(ciSymbol::make(klass_digestBase_name));
     assert(klass_digestBase->is_loaded(), "predicate checks that this class is loaded");
     ciInstanceKlass* instklass_digestBase = klass_digestBase->as_instance_klass();
-    return inline_digestBase_implCompressMB(digestBase_obj, instklass_digestBase, long_state, stub_addr, stub_name, src_start, ofs, limit);
+    return inline_digestBase_implCompressMB(digestBase_obj, instklass_digestBase, state_type, stub_addr, stub_name, src_start, ofs, limit);
   }
   return false;
 }
 
 //------------------------------inline_digestBase_implCompressMB-----------------------
 bool LibraryCallKit::inline_digestBase_implCompressMB(Node* digestBase_obj, ciInstanceKlass* instklass_digestBase,
-                                                      bool long_state, address stubAddr, const char *stubName,
+                                                      const char* state_type, address stubAddr, const char *stubName,
                                                       Node* src_start, Node* ofs, Node* limit) {
   const TypeKlassPtr* aklass = TypeKlassPtr::make(instklass_digestBase);
   const TypeOopPtr* xtype = aklass->as_instance_type();
   Node* digest_obj = new CheckCastPPNode(control(), digestBase_obj, xtype);
   digest_obj = _gvn.transform(digest_obj);
 
-  Node* state;
-  if (long_state) {
-    state = get_long_state_from_digest_object(digest_obj);
-  } else {
-    state = get_state_from_digest_object(digest_obj);
-  }
+  Node* state = get_state_from_digest_object(digest_obj, state_type);
   if (state == NULL) return false;
 
+  Node* digest_length = NULL;
+  if (strcmp("sha3_implCompressMB", stubName) == 0) {
+    digest_length = get_digest_length_from_digest_object(digest_obj);
+    if (digest_length == NULL) return false;
+  }
+
   // Call the stub.
-  Node* call = make_runtime_call(RC_LEAF|RC_NO_FP,
-                                 OptoRuntime::digestBase_implCompressMB_Type(),
-                                 stubAddr, stubName, TypePtr::BOTTOM,
-                                 src_start, state, ofs, limit);
+  Node* call;
+  if (digest_length == NULL) {
+    call = make_runtime_call(RC_LEAF|RC_NO_FP,
+                             OptoRuntime::digestBase_implCompressMB_Type(false),
+                             stubAddr, stubName, TypePtr::BOTTOM,
+                             src_start, state, ofs, limit);
+  } else {
+     call = make_runtime_call(RC_LEAF|RC_NO_FP,
+                             OptoRuntime::digestBase_implCompressMB_Type(true),
+                             stubAddr, stubName, TypePtr::BOTTOM,
+                             src_start, state, digest_length, ofs, limit);
+  }
+
   // return ofs (int)
   Node* result = _gvn.transform(new ProjNode(call, TypeFunc::Parms));
   set_result(result);
@@ -6637,9 +6714,9 @@ bool LibraryCallKit::inline_digestBase_implCompressMB(Node* digestBase_obj, ciIn
 }
 
 //------------------------------get_state_from_digest_object-----------------------
-Node * LibraryCallKit::get_state_from_digest_object(Node *digest_object) {
-  Node* digest_state = load_field_from_object(digest_object, "state", "[I", /*is_exact*/ false);
-  assert (digest_state != NULL, "wrong version of sun.security.provider.MD5/SHA/SHA2");
+Node * LibraryCallKit::get_state_from_digest_object(Node *digest_object, const char *state_type) {
+  Node* digest_state = load_field_from_object(digest_object, "state", state_type, /*is_exact*/ false);
+  assert (digest_state != NULL, "wrong version of sun.security.provider.MD5/SHA/SHA2/SHA5/SHA3");
   if (digest_state == NULL) return (Node *) NULL;
 
   // now have the array, need to get the start address of the state array
@@ -6647,26 +6724,22 @@ Node * LibraryCallKit::get_state_from_digest_object(Node *digest_object) {
   return state;
 }
 
-//------------------------------get_long_state_from_digest_object-----------------------
-Node * LibraryCallKit::get_long_state_from_digest_object(Node *digest_object) {
-  Node* digest_state = load_field_from_object(digest_object, "state", "[J", /*is_exact*/ false);
-  assert (digest_state != NULL, "wrong version of sun.security.provider.SHA5");
-  if (digest_state == NULL) return (Node *) NULL;
-
-  // now have the array, need to get the start address of the state array
-  Node* state = array_element_address(digest_state, intcon(0), T_LONG);
-  return state;
+//------------------------------get_digest_length_from_sha3_object----------------------------------
+Node * LibraryCallKit::get_digest_length_from_digest_object(Node *digest_object) {
+  Node* digest_length = load_field_from_object(digest_object, "digestLength", "I", /*is_exact*/ false);
+  assert (digest_length != NULL, "sanity");
+  return digest_length;
 }
 
 //----------------------------inline_digestBase_implCompressMB_predicate----------------------------
 // Return node representing slow path of predicate check.
 // the pseudo code we want to emulate with this predicate is:
-//    if (digestBaseObj instanceof MD5/SHA/SHA2/SHA5) do_intrinsic, else do_javapath
+//    if (digestBaseObj instanceof MD5/SHA/SHA2/SHA5/SHA3) do_intrinsic, else do_javapath
 //
 Node* LibraryCallKit::inline_digestBase_implCompressMB_predicate(int predicate) {
-  assert(UseMD5Intrinsics || UseSHA1Intrinsics || UseSHA256Intrinsics || UseSHA512Intrinsics,
-         "need MD5/SHA1/SHA256/SHA512 instruction support");
-  assert((uint)predicate < 4, "sanity");
+  assert(UseMD5Intrinsics || UseSHA1Intrinsics || UseSHA256Intrinsics || UseSHA512Intrinsics || UseSHA3Intrinsics,
+         "need MD5/SHA1/SHA256/SHA512/SHA3 instruction support");
+  assert((uint)predicate < 5, "sanity");
 
   // The receiver was checked for NULL already.
   Node* digestBaseObj = argument(0);
@@ -6700,6 +6773,12 @@ Node* LibraryCallKit::inline_digestBase_implCompressMB_predicate(int predicate) 
     if (UseSHA512Intrinsics) {
       // we want to do an instanceof comparison against the SHA5 class
       klass_name = "sun/security/provider/SHA5";
+    }
+    break;
+  case 4:
+    if (UseSHA3Intrinsics) {
+      // we want to do an instanceof comparison against the SHA3 class
+      klass_name = "sun/security/provider/SHA3";
     }
     break;
   default:
@@ -6930,6 +7009,7 @@ bool LibraryCallKit::inline_isCompileConstant() {
   return true;
 }
 
+<<<<<<< HEAD
 bool LibraryCallKit::inline_sizeOf() {
   if (!RuntimeSizeOf) {
     set_result(longcon(-1));
@@ -6937,6 +7017,15 @@ bool LibraryCallKit::inline_sizeOf() {
   }
 
   Node* obj = argument(0);
+=======
+//------------------------------- inline_getObjectSize --------------------------------------
+//
+// Calculate the runtime size of the object/array.
+//   native long sun.instrument.InstrumentationImpl.getObjectSize0(long nativeAgent, Object objectToSize);
+//
+bool LibraryCallKit::inline_getObjectSize() {
+  Node* obj = argument(3);
+>>>>>>> master
   Node* klass_node = load_object_klass(obj);
 
   jint  layout_con = Klass::_lh_neutral_value;
@@ -6945,7 +7034,10 @@ bool LibraryCallKit::inline_sizeOf() {
 
   if (layout_is_con) {
     // Layout helper is constant, can figure out things at compile time.
+<<<<<<< HEAD
     assert(false, "Since sizeOf is @DontInline, this path should be unvisited");
+=======
+>>>>>>> master
 
     if (Klass::layout_helper_is_instance(layout_con)) {
       // Instance case:  layout_con contains the size itself.
@@ -7046,6 +7138,7 @@ bool LibraryCallKit::inline_sizeOf() {
 
   return true;
 }
+<<<<<<< HEAD
 
 bool LibraryCallKit::inline_addressOf() {
   if (!RuntimeAddressOf) {
@@ -7077,3 +7170,5 @@ bool LibraryCallKit::inline_getReferencedObjects() {
   set_result(value);
   return true;
 }
+=======
+>>>>>>> master

@@ -56,7 +56,6 @@ import sun.security.util.SecurityConstants;
  * <p>
  * An application cannot create its own instance of this class.
  *
- * @author  unascribed
  * @see     java.lang.Runtime#getRuntime()
  * @since   1.0
  */

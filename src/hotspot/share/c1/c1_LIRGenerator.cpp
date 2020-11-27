@@ -1364,16 +1364,11 @@ void LIRGenerator::do_addressOf(Intrinsic* x) {
 #endif
 }
 
-void LIRGenerator::do_sizeOf(Intrinsic* x) {
-  assert(x->number_of_arguments() == 1, "wrong type");
+void LIRGenerator::do_getObjectSize(Intrinsic* x) {
+  assert(x->number_of_arguments() == 3, "wrong type");
   LIR_Opr result_reg = rlock_result(x);
 
-  if (!RuntimeSizeOf) {
-    __ move(LIR_OprFact::longConst(-1), result_reg);
-    return;
-  }
-
-  LIRItem value(x->argument_at(0), this);
+  LIRItem value(x->argument_at(2), this);
   value.load_item();
 
   LIR_Opr klass = new_register(T_METADATA);
@@ -3192,8 +3187,8 @@ void LIRGenerator::do_Intrinsic(Intrinsic* x) {
   case vmIntrinsics::_isPrimitive:    do_isPrimitive(x);   break;
   case vmIntrinsics::_getClass:       do_getClass(x);      break;
   case vmIntrinsics::_currentThread:  do_currentThread(x); break;
+  case vmIntrinsics::_getObjectSize:  do_getObjectSize(x); break;
   case vmIntrinsics::_addressOf:      do_addressOf(x);     break;
-  case vmIntrinsics::_sizeOf:         do_sizeOf(x);        break;
   case vmIntrinsics::_getReferencedObjects: do_getReferencedObjects(x); break;
 
   case vmIntrinsics::_dlog:           // fall through
@@ -3432,7 +3427,7 @@ void LIRGenerator::do_ProfileInvoke(ProfileInvoke* x) {
     // Notify the runtime very infrequently only to take care of counter overflows
     int freq_log = Tier23InlineeNotifyFreqLog;
     double scale;
-    if (_method->has_option_value("CompileThresholdScaling", scale)) {
+    if (_method->has_option_value(CompileCommand::CompileThresholdScaling, scale)) {
       freq_log = CompilerConfig::scaled_freq_log(freq_log, scale);
     }
     increment_event_counter_impl(info, x->inlinee(), LIR_OprFact::intConst(InvocationCounter::count_increment), right_n_bits(freq_log), InvocationEntryBci, false, true);
@@ -3473,7 +3468,7 @@ void LIRGenerator::increment_event_counter(CodeEmitInfo* info, LIR_Opr step, int
   }
   // Increment the appropriate invocation/backedge counter and notify the runtime.
   double scale;
-  if (_method->has_option_value("CompileThresholdScaling", scale)) {
+  if (_method->has_option_value(CompileCommand::CompileThresholdScaling, scale)) {
     freq_log = CompilerConfig::scaled_freq_log(freq_log, scale);
   }
   increment_event_counter_impl(info, info->scope()->method(), step, right_n_bits(freq_log), bci, backedge, true);
